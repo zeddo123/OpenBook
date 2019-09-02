@@ -1,2 +1,2 @@
 # OpenBook
-Open source Book Database
+Open source Book Database + Blockchain Network
