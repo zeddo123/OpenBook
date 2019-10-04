@@ -3,13 +3,15 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet import reactor
 
-from utils import uuid_generator
-from protocol_node import *
+from .utils import uuid_generator
+from .protocol_node import *
+from .blockchain import *
 
 
 class P2PFactory(Factory):
 	"""docstring for P2PFactory"""
 	def __init__(self, port, max_peers=0, debug=True):
+		self.blockchain = BlockChain()
 		# debug variable if True prints log
 		self.debug = debug
 
@@ -23,7 +25,6 @@ class P2PFactory(Factory):
 
 		self.uuid = uuid_generator()
 		self.known_peers = {}
-		self.not_connected_know_peers = []
 
 		#Connect to the SeedSever
 		seed_point = TCP4ClientEndpoint(reactor, "localhost", 5989)
@@ -38,15 +39,10 @@ class P2PFactory(Factory):
 		# Send Request to get new_peers from seed server
 		if first_time == True:
 			self.seed_connection.addCallback(lambda p : p.send_handshake())
+			self.seed_connection.addCallback(lambda p : p.send_get_blockchain())
 		else:
 			self.seed_connection.addCallback(lambda p : p.send_get_peers())
 
 
 	def buildProtocol(self, addr):
 		return P2Protocol(self)
-
-if __name__ == '__main__':
-	port = int(input('port'))
-	endpoint = TCP4ServerEndpoint(reactor, port)
-	endpoint.listen(P2PFactory(port))
-	reactor.run()

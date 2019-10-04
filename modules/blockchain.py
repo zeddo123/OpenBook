@@ -1,6 +1,6 @@
-from block import *
-from transaction import *
-from book import *
+from .block import *
+from .transaction import *
+from .book import *
 
 
 class BlockChain:
@@ -53,8 +53,10 @@ class BlockChain:
 
 		self.open_transactions = []
 
+	number_blocks = lambda self: len(self.blockchain)
+
 	def __str__(self):
-		print(f'::{len(self.block_chain)} blocks in the blockchain')
+		print(f'::{self.number_blocks()} blocks in the blockchain')
 		for block, number in zip(self.block_chain, range(len(self.block_chain))):
 			print('number\n',number)
 			print('block\n', block)

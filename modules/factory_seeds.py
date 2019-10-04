@@ -1,7 +1,7 @@
 from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor
-from protocol_seeds import *
+from .protocol_seeds import *
 
 
 class SeedFactory(Factory):
@@ -19,9 +19,3 @@ class SeedFactory(Factory):
 	
 	def buildProtocol(self, addr):
 		return SeedProtocol(self)
-
-if __name__ == '__main__':
-	endpoint = TCP4ServerEndpoint(reactor, 5989)
-	endpoint.listen(SeedFactory())
-	print('[Seeds Server is Up]')
-	reactor.run()
