@@ -53,6 +53,13 @@ class BlockChain:
 
 		self.open_transactions = []
 
+	def to_json(self):
+		dict_json = {}
+		for i, block in enumerate(self.blockchain):
+			dict_json[i] = block.to_json()
+		return dict_json
+
+
 	number_blocks = lambda self: len(self.blockchain)
 
 	def __str__(self):
