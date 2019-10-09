@@ -1,6 +1,7 @@
 from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
+from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
 from .utils import uuid_generator
@@ -29,7 +30,12 @@ class P2PFactory(Factory):
 		#Connect to the SeedSever
 		seed_point = TCP4ClientEndpoint(reactor, "localhost", 5989)
 		self.seed_connection = connectProtocol(seed_point, P2Protocol(self, node_type=2))
+
+		# Initiate handshake with seed server
 		self.update_peers(first_time=True)
+		# Request new peers from seed server
+		self.loop_peers = LoopingCall(self.update_peers)
+		self.loop_peers.start(60 * 5)
 
 	def _debug(self, msg):
 		if self.debug: print(msg)
@@ -39,7 +45,6 @@ class P2PFactory(Factory):
 		# Send Request to get new_peers from seed server
 		if first_time == True:
 			self.seed_connection.addCallback(lambda p : p.send_handshake())
-			self.seed_connection.addCallback(lambda p : p.send_get_blockchain())
 		else:
 			self.seed_connection.addCallback(lambda p : p.send_get_peers())
 

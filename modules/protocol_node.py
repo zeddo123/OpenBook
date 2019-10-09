@@ -8,7 +8,7 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
-import pickle
+from pprint import pprint
 
 # Import from custom modules
 from .utils import max_pow_2
@@ -48,10 +48,15 @@ class P2Protocol(Protocol):
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'Received Data {data.decode()}')
+		self.factory._debug(f'---------------Received Data---------------')
+		
 		for line in data.decode('utf-8').splitlines():
+			
 			line = line.strip()
-			info_type = json.loads(line)['information_type']
+			current_data = json.loads(line)
+			pprint(current_data,indent=4,width=-1)
+			info_type = current_data['information_type']
+
 			if info_type == 'handshake' and self.state != 'Active':
 				self.handel_handshake(line)
 				self.state = 'Active'
@@ -74,13 +79,13 @@ class P2Protocol(Protocol):
 			elif info_type == 'post_transaction':
 				pass
 
-
+	# Send ping to the connected node
 	def send_ping(self):
 		ping_json = json.dumps({'information_type': 'ping'})
 		self.factory._debug(f'Pinging {self.remote_nodeid}')
 		self.transport.write((ping_json + '\n').encode())
 
-
+	# Send pong to the connected node
 	def send_pong(self):
 		pong_json = json.dumps({'information_type': 'pong'})
 		self.factory._debug(f'Ponging {self.remote_nodeid}')
@@ -119,6 +124,7 @@ class P2Protocol(Protocol):
 			if self.node_type == 1:
 				self.send_handshake()
 				self.connect_to(ip=hs['my_ip'], port=hs['my_port'])
+
 			if self.loop_ping.running == False:
 				self.factory._debug('Looping Call started')
 				self.loop_ping.start(60 * 5) # Start pinging every 5mins
@@ -139,20 +145,22 @@ class P2Protocol(Protocol):
 				self.factory._debug('Found New Node :: Connecting')
 				self.connect_to(ip,port)
 
+
 	def send_get_blockchain(self):
 		ping_json = json.dumps({'information_type': 'get_blockchain'})
 		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}')
 		self.transport.write((ping_json + '\n').encode())
 
 	def send_blockchain(self):
-		serial_block = pickle.dumps({
+		serial_block = json.dumps({
 									'information_type': 'post_blockchain',
-									'blockchain': self.factory.blockchain})
+									'blockchain': self.factory.blockchain.to_json()
+								})
 		self.transport.write(serial_block)
 
 
 	def handel_blockchain(self, blockchain):
-		blockchain = pickle.loads(blockchain)['blockchain']
+		blockchain = json.loads(blockchain)['blockchain']
 		if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
 			self.factory = blockchain
 			self.factory._debug('-> Updating Local Blockchain')
@@ -168,6 +176,11 @@ class P2Protocol(Protocol):
 
 
 	def connect_to(self, ip, port):
+		def to_do(protocol):
+			protocol.send_handshake()
+			time.time(60)
+			protocol.send_get_blockchain()
+
 		connection_point = TCP4ClientEndpoint(reactor, ip, int(port))
 		d = connectProtocol(connection_point, P2Protocol(self.factory,node_type=2))
-		d.addCallback(lambda p: p.send_handshake())
+		d.addCallback(to_do)

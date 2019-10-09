@@ -2,6 +2,8 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.task import LoopingCall
 from time import time
 import json
+from pprint import pprint
+
 
 class SeedProtocol(Protocol):
 	"""docstring for the peer-2-peer protocol"""
@@ -24,17 +26,25 @@ class SeedProtocol(Protocol):
 
 	def connectionLost(self, reason):
 		self.factory._debug(f'Connection Lost with {self.remote_nodeid}')
-		id_rank = self.remote_nodeid+':'+self.number_queue
-		if  id_rank in self.factory.known_peers:
-			self.factory.known_peers.pop(id_rank)
-			self.loop_ping.stop()
+		
+		if self.remote_nodeid != 'client':
+			id_rank = self.remote_nodeid+':'+self.number_queue
+			if  id_rank in self.factory.known_peers:
+				self.factory.known_peers.pop(id_rank)
+				self.loop_ping.stop()
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'Received Data {data.decode()}')
+
+		self.factory._debug(f'---------------Received Data---------------')
+		
 		for line in data.decode('utf-8').splitlines():
 			line = line.strip()
-			info_type = json.loads(line)['information_type']
+			
+			current_data = json.loads(line)
+			info_type = current_data['information_type']
+			pprint(current_data,indent=4,width=-1)
+
 			if info_type == 'handshake' and self.state != 'Active':
 				self.handel_handshake(line)
 				self.state = 'Active'
@@ -75,7 +85,7 @@ class SeedProtocol(Protocol):
 		hs = json.dumps({
 						'information_type': 'post_peers',
 						'nodeid': 'SeedServer',
-						'number_queue': self.number_queue,
+						'number_queue': self.number_queue if self.remote_nodeid != 'client' else 'UNKNOWN',
 						'known_peers': self.format_peers(),
 						})
 
@@ -84,15 +94,23 @@ class SeedProtocol(Protocol):
 
 	def handel_handshake(self, hs):
 		hs = json.loads(hs)
-
+		
 		#Extraction remote node information
 		self.remote_nodeid = hs['nodeid']
 		self.remote_ip = hs['my_ip']
 		self.remote_port = hs['my_port']
 
+		if hs['nodeid'] == 'client':
+			self.factory._debug('Received handshake from client :: Proceed sending nodes')
+			self.send_peers()
+		else:
+			self.factory._debug('Received handshake from node :: Proceed by adding to the list')
+			self._handel_node(hs)
+
+	def _handel_node(self, hs):
 		self.number_queue = str(len(self.factory.known_peers))
 		self.factory.known_peers[self.remote_nodeid+':'+ self.number_queue] = self
 		self.send_peers()
 		if self.loop_ping.running == False:
-			self.factory._debug('Looping Call started')
+			self.factory._debug('Looping ping call started')
 			self.loop_ping.start(60 * 5) # Start pinging every 5mins
