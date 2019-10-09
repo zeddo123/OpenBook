@@ -2,6 +2,8 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.task import LoopingCall
 from time import time
 import json
+from pprint import pprint
+
 
 class SeedProtocol(Protocol):
 	"""docstring for the peer-2-peer protocol"""
@@ -33,10 +35,16 @@ class SeedProtocol(Protocol):
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'Received Data {data.decode()}')
+
+		self.factory._debug(f'---------------Received Data---------------')
+		
 		for line in data.decode('utf-8').splitlines():
 			line = line.strip()
-			info_type = json.loads(line)['information_type']
+			
+			current_data = json.loads(line)
+			info_type = current_data['information_type']
+			pprint(current_data,indent=4,width=-1)
+
 			if info_type == 'handshake' and self.state != 'Active':
 				self.handel_handshake(line)
 				self.state = 'Active'

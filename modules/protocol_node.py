@@ -8,6 +8,7 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
+from pprint import pprint
 
 # Import from custom modules
 from .utils import max_pow_2
@@ -47,10 +48,15 @@ class P2Protocol(Protocol):
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'Received Data {data.decode()}')
+		self.factory._debug(f'---------------Received Data---------------')
+		
 		for line in data.decode('utf-8').splitlines():
+			
 			line = line.strip()
-			info_type = json.loads(line)['information_type']
+			current_data = json.loads(line)
+			pprint(current_data,indent=4,width=-1)
+			info_type = current_data['information_type']
+
 			if info_type == 'handshake' and self.state != 'Active':
 				self.handel_handshake(line)
 				self.state = 'Active'

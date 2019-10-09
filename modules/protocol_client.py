@@ -11,7 +11,7 @@ from .book import Book
 from time import time
 from operator import xor
 import json
-import pickle
+from pprint import pprint
 
 
 class ClientProtocol(Protocol):
@@ -28,10 +28,14 @@ class ClientProtocol(Protocol):
 
 
 	def dataReceived(self, data):
-		self._debug(f'Received Data {data.decode()}')
+		self._debug(f'---------------Received Data---------------')
+
 		for line in data.decode('utf-8').splitlines():
 			line = line.strip()
-			info_type = json.loads(line)['information_type']
+			current_data = json.loads(line)
+			info_type = current_data['information_type']
+			pprint(current_data,indent=4,width=4)
+
 			if info_type == 'handshake':
 				self.handel_handshake(line)
 				self.state = 'Active'
