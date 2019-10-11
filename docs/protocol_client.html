@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>protocol_client.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>protocol_client.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Imports from the twisted module</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.internet.protocol</span> <span class="kn">import</span> <span class="n">Protocol</span>
+<span class="kn">from</span> <span class="nn">twisted.internet.task</span> <span class="kn">import</span> <span class="n">LoopingCall</span>
+<span class="kn">from</span> <span class="nn">twisted.internet.endpoints</span> <span class="kn">import</span> <span class="n">TCP4ClientEndpoint</span><span class="p">,</span> <span class="n">connectProtocol</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Import from standard modules</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">.transaction</span> <span class="kn">import</span> <span class="n">Transaction</span>
+<span class="kn">from</span> <span class="nn">.book</span> <span class="kn">import</span> <span class="n">Book</span> 
+
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">xor</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">ClientProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">connectionMade</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Connection Made with {self.transport.getPeer()}&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">connectionLost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Connection Lost&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">dataReceived</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;---------------Received Data---------------&#39;</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+			<span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+			<span class="n">current_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+			<span class="n">info_type</span> <span class="o">=</span> <span class="n">current_data</span><span class="p">[</span><span class="s1">&#39;information_type&#39;</span><span class="p">]</span>
+			<span class="n">pprint</span><span class="p">(</span><span class="n">current_data</span><span class="p">,</span><span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">info_type</span> <span class="o">==</span> <span class="s1">&#39;handshake&#39;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">handel_handshake</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;Active&#39;</span>
+			
+			<span class="k">elif</span> <span class="n">info_type</span> <span class="o">==</span> <span class="s1">&#39;ping&#39;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">send_pong</span><span class="p">()</span>
+			<span class="k">elif</span> <span class="n">info_type</span> <span class="o">==</span> <span class="s1">&#39;pong&#39;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">handel_pong</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+			
+			<span class="k">elif</span> <span class="n">info_type</span> <span class="o">==</span> <span class="s1">&#39;post_peers&#39;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">handel_post_peers</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="n">info_type</span> <span class="o">==</span> <span class="s1">&#39;transaction_done&#39;</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">handel_post_transaction</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Send ping to the connected node</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">send_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">ping_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;information_type&#39;</span><span class="p">:</span> <span class="s1">&#39;ping&#39;</span><span class="p">})</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Pinging {self.remote_nodeid}&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">ping_json</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Send pong to the connected node</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">send_pong</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">pong_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;information_type&#39;</span><span class="p">:</span> <span class="s1">&#39;pong&#39;</span><span class="p">})</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Ponging {self.remote_nodeid}&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">pong_json</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">handel_pong</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pong</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Node {self.remote_nodeid} still active ::{pong}&#39;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">send_handshake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Sending handshake {self.transport.getPeer()}&#39;</span><span class="p">)</span>
+		<span class="n">hs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+						<span class="s1">&#39;information_type&#39;</span><span class="p">:</span> <span class="s1">&#39;handshake&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;nodeid&#39;</span><span class="p">:</span> <span class="s1">&#39;client&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;my_ip&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+						<span class="s1">&#39;my_port&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+						<span class="p">})</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">hs</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">handel_handshake</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hs</span><span class="p">):</span>
+		<span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">handel_post_peers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peers</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s1">&#39;:: Post peers Received&#39;</span><span class="p">)</span>
+		<span class="n">peers</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">peers</span><span class="p">)</span>
+		<span class="n">number_queue</span> <span class="o">=</span> <span class="n">peers</span><span class="p">[</span><span class="s1">&#39;number_queue&#39;</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">remote_nodeid</span> <span class="o">=</span> <span class="n">peers</span><span class="p">[</span><span class="s1">&#39;nodeid&#39;</span><span class="p">]</span>
+
+		<span class="k">for</span> <span class="n">rank</span><span class="p">,</span> <span class="n">peer</span> <span class="ow">in</span> <span class="n">peers</span><span class="p">[</span><span class="s1">&#39;known_peers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="n">peer</span> <span class="o">=</span> <span class="n">peer</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+			<span class="n">ip</span> <span class="o">=</span> <span class="n">peer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">port</span> <span class="o">=</span> <span class="n">peer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+			<span class="k">print</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+			<span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect_to</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span><span class="n">port</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+				<span class="k">break</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">loseConnection</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">send_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">sender</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;sender -&gt; &#39;</span><span class="p">)</span>
+		<span class="n">title</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;title -&gt; &#39;</span><span class="p">)</span>
+		<span class="n">author</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;author -&gt; &#39;</span><span class="p">)</span>
+		<span class="n">date</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;date -&gt;&#39;</span><span class="p">)</span>
+		<span class="n">genre</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s1">&#39;genre -&gt;&#39;</span><span class="p">)</span>
+
+		<span class="n">book</span> <span class="o">=</span> <span class="n">Book</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="n">author</span><span class="p">,</span><span class="n">date</span><span class="p">,</span><span class="n">genre</span><span class="p">)</span>
+		<span class="n">trans</span> <span class="o">=</span> <span class="n">Transaction</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="n">book</span><span class="p">)</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">byte_trans</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span><span class="s1">&#39;information_type&#39;</span><span class="p">:</span><span class="s1">&#39;post_transaction&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">:</span><span class="n">trans</span><span class="o">.</span><span class="n">to_json</span><span class="p">()})</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="n">byte_trans</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+
+		<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s1">&#39;Exception occured (dumping and sending the data)&#39;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">(</span><span class="s1">&#39;:: Transaction sent :: Exiting&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">loseConnection</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">handel_post_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">loseConnection</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">handel_transaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">connect_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">connection_point</span> <span class="o">=</span> <span class="n">TCP4ClientEndpoint</span><span class="p">(</span><span class="n">reactor</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>
+			<span class="n">d</span> <span class="o">=</span> <span class="n">connectProtocol</span><span class="p">(</span><span class="n">connection_point</span><span class="p">,</span> <span class="n">ClientProtocol</span><span class="p">())</span>
+			<span class="n">d</span><span class="o">.</span><span class="n">addCallback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">send_transaction</span><span class="p">())</span>
+			<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">except</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">False</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>	<span class="k">def</span> <span class="nf">_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

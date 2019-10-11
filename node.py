@@ -1,3 +1,5 @@
+"""Node script: Runs a ServerEndPoint to access the network
+"""
 from modules.factory_node import *
 
 port = int(input('port -> '))
