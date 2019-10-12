@@ -1,6 +1,6 @@
-from .block import *
-from .transaction import *
-from .book import *
+from modules.blockchain.block import *
+from modules.blockchain.transaction import *
+from modules.blockchain.book import *
 
 
 class BlockChain:

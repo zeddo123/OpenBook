@@ -3,7 +3,7 @@
 """
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet import reactor
-from modules.protocol_client import *
+from modules.protocols.protocol_client import *
 
 
 import pickle

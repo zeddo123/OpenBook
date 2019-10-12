@@ -11,7 +11,10 @@ import json
 from pprint import pprint
 
 # Import from custom modules
-from .utils import max_pow_2
+import sys
+sys.path.insert(0, '..')
+
+from modules.utils import max_pow_2
 
 
 class P2Protocol(Protocol):

@@ -4,13 +4,17 @@ from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet.task import LoopingCall
 from twisted.internet import reactor
 
-from .utils import uuid_generator
-from .protocol_node import *
-from .blockchain import *
+import sys
+sys.path.insert(0, '..')
+
+from modules.utils import uuid_generator
+from modules.protocols.protocol_node import *
+from modules.blockchain.blockchain import *
 
 
 class P2PFactory(Factory):
 	"""docstring for P2PFactory"""
+	
 	def __init__(self, port, max_peers=0, debug=True):
 		self.blockchain = BlockChain()
 		# debug variable if True prints log

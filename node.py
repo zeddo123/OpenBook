@@ -1,7 +1,7 @@
 """Node script: Runs a ServerEndPoint to access the network
 """
 if __name__ == '__main__':
-	from modules.factory_node import *
+	from modules.factories.factory_node import *
 
 	port = int(input('port -> '))
 

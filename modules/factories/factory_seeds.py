@@ -1,7 +1,11 @@
 from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.internet import reactor
-from .protocol_seeds import *
+
+import sys
+sys.path.insert(0, '..')
+
+from modules.protocols.protocol_seeds import *
 
 
 class SeedFactory(Factory):

@@ -5,8 +5,11 @@ from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet import reactor
 
 # Import from standard modules
-from .transaction import Transaction
-from .book import Book 
+import sys
+sys.path.insert(0, '..')
+
+from blockchain.transaction import Transaction
+from blockchain.book import Book 
 
 from time import time
 from operator import xor
