@@ -7,10 +7,11 @@ from modules.protocol_client import *
 
 
 import pickle
+if '__name__' == '__main__':
 
-host, port = "localhost", 5989
+	host, port = "localhost", 5989
 
-seed_point = TCP4ClientEndpoint(reactor, host, 5989)
-connect = connectProtocol(seed_point, ClientProtocol())
-connect.addCallback(lambda p: p.send_handshake())
-reactor.run()
+	seed_point = TCP4ClientEndpoint(reactor, host, 5989)
+	connect = connectProtocol(seed_point, ClientProtocol())
+	connect.addCallback(lambda p: p.send_handshake())
+	reactor.run()

@@ -1,13 +1,14 @@
 """Node script: Runs a ServerEndPoint to access the network
 """
-from modules.factory_node import *
+if __name__ == '__main__':
+	from modules.factory_node import *
 
-port = int(input('port -> '))
+	port = int(input('port -> '))
 
-endpoint = TCP4ServerEndpoint(reactor, port)
+	endpoint = TCP4ServerEndpoint(reactor, port)
 
-node_factory = P2PFactory(port)
-endpoint.listen(node_factory)
+	node_factory = P2PFactory(port)
+	endpoint.listen(node_factory)
 
-reactor.run()
+	reactor.run()
 
