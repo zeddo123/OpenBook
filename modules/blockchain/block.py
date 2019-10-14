@@ -5,33 +5,33 @@ from modules.blockchain.transaction import *
 
 
 class Block:
-	"""	Block Object to be added to the chain
+	"""Block Object to be added to the chain
 
-		Attributes
-		==========
+	Attributes
+	==========
 
-		:attr previous_hash: The previous hash of the block
-		:type previous_hash: str
+	:attr previous_hash: The previous hash of the block
+	:type previous_hash: str
 
-		:attr transactions: All the transcations in the block
-		:type transactions: list
+	:attr transactions: All the transcations in the block
+	:type transactions: list
 
-		:attr index: The number of the block in the chain
-		:type index: int
+	:attr index: The number of the block in the chain
+	:type index: int
 
-		:attr nonce: The nonce of the block **by default like bitcoin**
-		:type nonce: int
+	:attr nonce: The nonce of the block **by default like bitcoin**
+	:type nonce: int
 
-		:attr timestamp: The time in witch the block was created
-		:type timestamp: str
+	:attr timestamp: The time in witch the block was created
+	:type timestamp: str
 
-		Methods
-		=======
+	Methods
+	=======
 		
-		:meth __init__: Constructor of the class
-		:meth to_json: Create a json file of the block
-		:meth hash_block: Calculate the hash of the block
-		:meth __str__: magic method, prints the block
+	:meth __init__: Constructor of the class
+	:meth to_json: Create a json file of the block
+	:meth hash_block: Calculate the hash of the block
+	:meth __str__: magic method, prints the block
 	"""
 
 	def __init__(self, previous_hash=None, transactions=[], index=0, nonce=208393):
@@ -57,14 +57,16 @@ class Block:
 	def to_json(self) -> dict:
 		"""
 		to_json converts the object into a json object
-		:var json_dict: contains information about the block
-			1. previous hash
-			2. index
-			3. transactions
-			4. nonce
-			5. Timestamp
-		:var json_dict: dict
 
+		:var json_dict: contains information about the block
+
+		1. previous hash
+		2. index
+		3. transactions
+		4. nonce
+		5. Timestamp
+
+		:var json_dict: dict
 		:returns: a dict (json) containing of the information of the block
 		:rtype: dict
 		"""

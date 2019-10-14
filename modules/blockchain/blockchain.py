@@ -17,7 +17,7 @@ class BlockChain:
 
 	Methods
 	=======
-		
+
 	:meth __init__: Constructor of the class
 		
 	:meth to_json: Create a json file of the blockchain

@@ -1,5 +1,5 @@
 """	Client script, Run a ClientEndPoint 
-	and broadcast a transaction into the network
+and broadcast a transaction into the network
 """
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet import reactor
