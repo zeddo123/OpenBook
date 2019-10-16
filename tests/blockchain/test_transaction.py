@@ -1,6 +1,9 @@
+import sys
+sys.path.append('../../')
+
 import unittest
-from transaction import Transaction
-from book import Book
+from modules.blockchain.transaction import Transaction
+from modules.blockchain.book import Book
 
 class TestTransaction(unittest.TestCase):
 

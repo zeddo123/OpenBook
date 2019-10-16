@@ -1,5 +1,8 @@
+import sys
+sys.path.append('../../')
+
 import unittest
-from book import Book
+from modules.blockchain.book import Book
 
 class TestBook(unittest.TestCase):
 

@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../../')
+
 import unittest
-from block import Block
-from transaction import Transaction
-from book import Book
+from modules.blockchain.block import Block
+from modules.blockchain.transaction import Transaction
+from modules.blockchain.book import Book
 
 class TestBlock(unittest.TestCase):
 

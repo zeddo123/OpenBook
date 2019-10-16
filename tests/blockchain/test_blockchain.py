@@ -1,5 +1,8 @@
+import sys
+sys.path.append('../../')
+
 import unittest
-from blockchain import BlockChain
+from modules.blockchain.blockchain import BlockChain
 
 class TestBlockchain(unittest.TestCase):
 
