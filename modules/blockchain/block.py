@@ -1,7 +1,7 @@
 import hashlib
 import json
 import datetime
-from modules.blockchain.transaction import *
+from transaction import *
 
 
 class Block:
