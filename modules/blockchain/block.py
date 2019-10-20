@@ -73,7 +73,7 @@ class Block:
 		json_dict = {
 			'previous_hash': self.previous_hash,
 			'index': self.index,
-			'transactions': list(map(Transaction.to_json,self.transactions)),
+			'transactions': list(map(Transaction.to_json, self.transactions)),
 			'nonce': self.nonce,
 			'Timestamp': self.timestamp
 		}

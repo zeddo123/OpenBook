@@ -71,7 +71,11 @@ class BlockChain:
 
 
 	def proof_of_work(self):
-		"""Search for the right nonce value
+		"""Search for the right hash by adjusting the `nonce` value
+
+		:nonce: field whose value is adjusted by miners 
+		so that the hash of the block will be
+		the current target (for now it's 42 as the first two chars) of the network
 		
 		:returns: nonce of the hash
 		:rtype: int
@@ -88,19 +92,40 @@ class BlockChain:
 	
 
 	def create_append_transaction(self, sender, recipient, book, transaction_type=1):
+		"""This method create a transaction and append it to the Open transaction attr
+		:param sender: creator of the transaction
+		:type sender: str
+
+		:param recipient: Either the data-base aka blockchain or the miner Id
+		:type recipient: str
+
+		:param book: the data that will be stored in the transaction
+		:type book: Object Book -> `block.py`
+
+		:returns: None
+		"""
 		new_transaction = Transaction(sender,recipient,book,transaction_type)
 		self.open_transactions.append(new_transaction)
 
 
 	def mine_block(self, recipient):
-		last_block = self.block_chain[-1]
-		last_hash = last_block.hash_block()
+		"""This method mine the new block with the opentransaction list
 
-		nonce = self.proof_of_work()
+		:param recipient: Miner's ID - who is being rewarded for mining the block 
+		:type recipient: str
 
+		:returns: None
+		"""
+		last_block = self.block_chain[-1] # Get the Last block
+		last_hash = last_block.hash_block() # Get the hash of the last block
+
+		nonce = self.proof_of_work() # Determine the nonce value
+
+		# Create the reward and append it to the open transactions
 		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, transaction_type=2)
 		self.open_transactions.append(reward_transaction)
 
+		# Create the new Block
 		new_block = Block(last_hash,self.open_transactions,index=len(self.block_chain),nonce=nonce)
 
 		self.block_chain.append(new_block)
@@ -108,14 +133,24 @@ class BlockChain:
 		self.open_transactions = []
 
 	def to_json(self):
+		"""
+		to_json converts the object into a json object
+
+		:var dict_json: contains information about the blocks
+		:type dict_json: dict
+
+		:returns: a dict (json) containing the chain
+		:rtype: dict
+		"""
 		dict_json = {}
 
+		# Loop through and convert the block to json objects
 		for i, block in enumerate(self.blockchain):
 			dict_json[i] = block.to_json()
 		
 		return dict_json
 
-
+	# Returs number of block in the chain
 	number_blocks = lambda self: len(self.blockchain)
 
 	def __str__(self):
@@ -130,5 +165,5 @@ if __name__ == '__main__':
 	blockchain = BlockChain()
 	print(blockchain)
 	blockchain.create_append_transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science'))
-	blockchain.mine_block('mouha')
+	blockchain.mine_block('zeddo')
 	print(blockchain)
