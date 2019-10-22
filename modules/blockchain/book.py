@@ -2,18 +2,19 @@ class Book:
 	"""The Book object contains all the information about a book"""
 	def __init__(self, title, author, date, genre):
 		"""Object contructor
-
+		
 		:param title: title of the Book
 		:type title: str
-
+		
 		:param author: author of the book
 		:type author: str
-
+		
 		:param data: the date at which the book has been published
 		:param date: str
-
+		
 		:param genre: the subject/type of the book
 		:type genre: str
+		
 		"""
 		self.title = title
 		self.author = author

@@ -8,8 +8,8 @@ from twisted.internet import reactor
 import sys
 sys.path.insert(0, '..')
 
-from blockchain.transaction import Transaction
-from blockchain.book import Book 
+from modules.blockchain.transaction import Transaction
+from modules.blockchain.book import Book 
 
 from time import time
 from operator import xor

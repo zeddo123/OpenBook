@@ -4,7 +4,7 @@ import hashlib
 class Transaction:
 	"""
 	the transaction object contains all the information about a transaction
-	
+
 	Attributes
 	==========
 	
@@ -12,8 +12,9 @@ class Transaction:
 	if it's the case,no need to create a book object
 	:type transaction_type: int
 
-	*. 1 -> for a "Book" transaction 
-	*. 2 -> for a reward transaction
+	* 1 -> for a "Book" transaction 
+	* 2 -> for a reward transaction
+
 
 	:attr sender: the name/id of the node creating the transaction
 	:type sender: str
