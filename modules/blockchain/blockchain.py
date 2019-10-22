@@ -12,7 +12,7 @@ class BlockChain:
 	:attr block_chain: All the blocks in the chain
 	:type block_chain: list
 
-	:attr open_transaction: All the transcations to be added
+	:attr open_transaction: All the transactions to be added
 	:type open_transaction: list
 
 	Methods
@@ -20,7 +20,7 @@ class BlockChain:
 
 	:meth __init__: Constructor of the class
 		
-	:meth to_json: Create a json file of the blockchain
+	:meth to_json: Create a json file of the block-chain
 		
 	:meth valid_proof: Verify the hash guess
 		

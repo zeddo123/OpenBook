@@ -13,7 +13,7 @@ class Block:
 	:attr previous_hash: The previous hash of the block
 	:type previous_hash: str
 
-	:attr transactions: All the transcations in the block
+	:attr transactions: All the transactions in the block
 	:type transactions: list
 
 	:attr index: The number of the block in the chain
@@ -64,7 +64,7 @@ class Block:
 		2. index
 		3. transactions
 		4. nonce
-		5. Timestamp
+		5. Time-stamp
 
 		:var json_dict: dict
 		:returns: a dict (json) containing of the information of the block
