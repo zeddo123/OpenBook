@@ -20,14 +20,6 @@ modules.factories.factory\_seeds module
    :undoc-members:
    :show-inheritance:
 
-modules.factories.test\_factory\_node module
---------------------------------------------
-
-.. automodule:: modules.factories.test_factory_node
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------

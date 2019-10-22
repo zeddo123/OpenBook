@@ -1,22 +1,20 @@
-modules package
-===============
+tests package
+=============
 
 Subpackages
 -----------
 
 .. toctree::
 
-   modules.blockchain
-   modules.factories
-   modules.protocols
+   tests.blockchain
 
 Submodules
 ----------
 
-modules.utils module
---------------------
+tests.test\_utils module
+------------------------
 
-.. automodule:: modules.utils
+.. automodule:: tests.test_utils
    :members:
    :undoc-members:
    :show-inheritance:
@@ -25,7 +23,7 @@ modules.utils module
 Module contents
 ---------------
 
-.. automodule:: modules
+.. automodule:: tests
    :members:
    :undoc-members:
    :show-inheritance:
