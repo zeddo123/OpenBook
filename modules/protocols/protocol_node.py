@@ -58,7 +58,8 @@ class P2Protocol(Protocol):
 			line = line.strip()
 			current_data = json.loads(line)
 			pprint(current_data,indent=4,width=-1)
-			info_type = current_data['information_type']
+
+			info_type = current_data['information_type'] # Get the type of the request
 
 			if info_type == 'handshake' and self.state != 'Active':
 				self.handel_handshake(line)
@@ -80,27 +81,28 @@ class P2Protocol(Protocol):
 			elif info_type == 'get_transaction':
 				pass
 			elif info_type == 'post_transaction':
-				pass
+				self.handel_transaction(line)
 
-	# Send ping to the connected node
+	# Handling Initialisation
 	def send_ping(self):
+		"""Send ping to the connected node"""
 		ping_json = json.dumps({'information_type': 'ping'})
 		self.factory._debug(f'Pinging {self.remote_nodeid}')
 		self.transport.write((ping_json + '\n').encode())
 
-	# Send pong to the connected node
 	def send_pong(self):
+		"""Send pong to the connected node"""
 		pong_json = json.dumps({'information_type': 'pong'})
 		self.factory._debug(f'Ponging {self.remote_nodeid}')
 		self.transport.write((pong_json + '\n').encode())
 
-
 	def handel_pong(self, pong):
+		"""Received a pong"""
 		self.factory._debug(f'Node {self.remote_nodeid} still active ::{pong}')
 		self.last_ping = time()
 
-
 	def send_handshake(self):
+		"""Sends a handshake to the new connection"""
 		self.factory._debug(f'Sending handshake {self.transport.getPeer()}')
 		hs = json.dumps({
 						'information_type': 'handshake',
@@ -110,8 +112,13 @@ class P2Protocol(Protocol):
 						})
 		self.transport.write((hs+'\n').encode())	
 
-
 	def handel_handshake(self, hs):
+		"""This method deals with what to do when a handshake is received
+
+		:param hs: handshake
+		:type hs: Json/dict
+		"""
+
 		hs = json.loads(hs)
 		# Get the remote node id (uuid) from handshake
 		self.remote_nodeid = hs['nodeid']
@@ -132,8 +139,15 @@ class P2Protocol(Protocol):
 				self.factory._debug('Looping Call started')
 				self.loop_ping.start(60 * 5) # Start pinging every 5mins
 
-
+	# Getting new peers
 	def handel_post_peers(self, peers):
+		"""This method deals with what to 
+		do when a new list of node is received
+		
+		:param peers: list of new peers
+		:type peers: json/dict
+		"""
+
 		peers = json.loads(peers)
 		number_queue = peers['number_queue']
 		self.remote_nodeid = peers['nodeid']
@@ -149,20 +163,30 @@ class P2Protocol(Protocol):
 				self.connect_to(ip,port)
 
 
+	# Sending/Posting/Handling the block-chain
 	def send_get_blockchain(self):
+		"""The method that sends a request to get a chain"""
+
 		ping_json = json.dumps({'information_type': 'get_blockchain'})
 		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}')
 		self.transport.write((ping_json + '\n').encode())
 
 	def send_blockchain(self):
+		"""method that sends the local chain to the connected node"""
 		serial_block = json.dumps({
 									'information_type': 'post_blockchain',
 									'blockchain': self.factory.blockchain.to_json()
 								})
 		self.transport.write(serial_block)
 
-
 	def handel_blockchain(self, blockchain):
+		"""This method deals with what to do when a block-chain is received
+		
+		[description]
+		:param blockchain: the new chain
+		:type blockchain: json/dict
+
+		"""
 		blockchain = json.loads(blockchain)['blockchain']
 		if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
 			self.factory = blockchain
@@ -170,15 +194,43 @@ class P2Protocol(Protocol):
 		else:
 			self.factory._debug('-> Updating Local Blockchain -> Local Blockchain longer')
 
+
+	# Sending/Posting/Handling the transactions
 	def send_transaction(self):
+		"""Sends a transaction to the connected node
+		
+		[description]
+		"""
 		pass
 
+	def handel_transaction(self, new_transaction):
+		"""this method deals with what to do when a transaction is received
+		
+		[description]
+		:param new_transaction: the new transaction *{'information_type':'post_transaction','data':transaction}*
+		:type new_transaction: json/dict
+		"""
+		transaction = Transaction.json_to_transaction(new_transaction['data'])
+		self.factory.blockchain.create_append_transaction(transaction)
+		
+		self.factory._debug('Sending \'transaction_done\'')
+		done_json = json.dumps({'information_type': 'transaction_done'})
+		self.transport.write((done_json + '\n').encode())
 
-	def handel_transaction(self):
-		pass
 
 
+
+
+	# Starting a client instance
 	def connect_to(self, ip, port):
+		"""This method connect to a node *'as a client'*
+		
+		[description]
+		:param ip: id address
+		:type ip: str
+		:param port: port number
+		:type port: int
+		"""
 		def to_do(protocol):
 			protocol.send_handshake()
 			time.time(60)

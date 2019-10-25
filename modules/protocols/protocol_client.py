@@ -52,7 +52,7 @@ class ClientProtocol(Protocol):
 				self.handel_post_peers(line)
 
 			elif info_type == 'transaction_done':
-				self.handel_post_transaction()
+				self.handel_done()
 
 	# Send ping to the connected node
 	def send_ping(self):
@@ -115,18 +115,12 @@ class ClientProtocol(Protocol):
 			self.transport.write((byte_trans+'\n').encode())
 
 		except Exception as e:
-			self._debug('Exception occured (dumping and sending the data)')
+			self._debug('Exception occurred (dumping and sending the data)')
 		else:
-			self._debug(':: Transaction sent :: Exiting')
+			self._debug(':: Transaction sent ::')
+
+	def handel_done_transaction(self):
 		self.transport.loseConnection()
-
-
-	def handel_post_transaction(self):
-		self.transport.loseConnection()
-
-	def handel_transaction(self):
-		pass
-
 
 	def connect_to(self, ip, port):
 		try:

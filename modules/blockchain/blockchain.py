@@ -92,22 +92,20 @@ class BlockChain:
 
 		return nonce
 	
-
-	def create_append_transaction(self, sender, recipient, book, transaction_type=1):
+	# TODO: change the name of this method
+	def create_append_transaction(self, new_transaction):
 		"""This method create a transaction and append it to the Open transaction attr
-		:param sender: creator of the transaction
-		:type sender: str
-
-		:param recipient: Either the data-base aka blockchain or the miner Id
-		:type recipient: str
-
-		:param book: the data that will be stored in the transaction
-		:type book: Object Book -> `block.py`
-
+		
+		:param new_transaction: new transaction
+		:type new_transaction: Transaction object -> *`modules.blockchain.transaction`*
+		
 		:returns: None
 		"""
-		new_transaction = Transaction(sender,recipient,book,transaction_type)
-		self.open_transactions.append(new_transaction)
+		if self.verify_transaction(new_transaction):
+			self.open_transactions.append(new_transaction)
+
+	def verify_transaction(self, new_transaction):
+		pass
 
 
 	def mine_block(self, recipient):

@@ -48,3 +48,20 @@ class Transaction:
 			'book': self.book
 		}
 		return json_dict
+
+	@classmethod
+	def json_to_transaction(json_transaction):
+		"""Convert a json/dict into a Transaction object
+		
+		[description]
+		:param json_transaction: transaction
+		:type json_transaction: json/dict
+		:returns: The converted transaction
+		:rtype: Transaction
+		"""
+		sender = json_transaction['sender']
+		type_t = json_transaction['type']
+		recipient = json_transaction['recipient']
+		book = json_transaction['book']
+		
+		return Transaction(sender,recipient,book,type_t)

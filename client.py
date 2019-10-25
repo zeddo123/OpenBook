@@ -6,7 +6,6 @@ from twisted.internet import reactor
 from modules.protocols.protocol_client import *
 
 
-import pickle
 if '__name__' == '__main__':
 
 	host, port = "localhost", 5989
