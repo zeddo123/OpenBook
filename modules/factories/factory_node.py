@@ -28,7 +28,12 @@ class P2PFactory(Factory):
 		self.port = port
 
 		self.uuid = uuid_generator()
+		
+		# dict of all the peers that are connected to this node
 		self.known_peers = {}
+
+		# List of all the peers that the current node will connect-to as a `client`
+		self.server_peers = []
 
 		#Connect to the SeedSever
 		seed_point = TCP4ClientEndpoint(reactor, "localhost", 5989)

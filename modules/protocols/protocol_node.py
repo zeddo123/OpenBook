@@ -41,14 +41,15 @@ class P2Protocol(Protocol):
 
 
 	def connectionMade(self):
-		self.factory._debug(f'Connection Made with {self.transport.getPeer()}')
+		self.factory._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}')
 		self.my_ip = self.transport.getHost().host
 
 	def connectionLost(self, reason):
 		self.factory._debug(f'Connection Lost with {self.remote_nodeid}')
 		if self.remote_nodeid in self.factory.known_peers:
 			self.factory.known_peers.pop(self.remote_nodeid)
-			self.loop_ping.stop()
+			if self.loop_ping.running() == True:
+				self.loop_ping.stop()
 
 
 	def dataReceived(self, data):
@@ -83,6 +84,8 @@ class P2Protocol(Protocol):
 				pass
 			elif info_type == 'post_transaction':
 				self.handel_transaction(line)
+
+		self.factory._debug('__________________________________________\n\n\n\n')
 
 	# Handling Initialisation
 	def send_ping(self):
@@ -132,13 +135,16 @@ class P2Protocol(Protocol):
 			
 			# Resend a handshake and connect as a client only 
 			# if protocol instance is a server
-			if self.node_type == 1:
+			if self.node_type == 1 and not self.remote_nodeid in self.factory.server_peers:
 				self.send_handshake()
+			
+			if not self.remote_nodeid in self.factory.server_peers:
+				self.factory.server_peers.append(self.remote_nodeid)
 				self.connect_to(ip=hs['my_ip'], port=hs['my_port'])
 
-			if self.loop_ping.running == False:
+			if self.loop_ping.running == False and self.node_type == 1:
 				self.factory._debug('Looping Call started')
-				self.loop_ping.start(60 * 5) # Start pinging every 5mins
+				self.loop_ping.start(60 * 5) # Start pinging every 5 mins
 
 	# Getting new peers
 	def handel_post_peers(self, peers):
