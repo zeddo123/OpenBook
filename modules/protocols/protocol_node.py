@@ -8,7 +8,6 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
-from pprint import pprint
 
 # Import from custom modules
 import sys
@@ -41,25 +40,25 @@ class P2Protocol(Protocol):
 
 
 	def connectionMade(self):
-		self.factory._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}')
+		self.factory._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}', self.node_type)
 		self.my_ip = self.transport.getHost().host
 
 	def connectionLost(self, reason):
-		self.factory._debug(f'Connection Lost with {self.remote_nodeid}')
+		self.factory._debug(f'Connection Lost with {self.remote_nodeid}', self.node_type)
 		if self.remote_nodeid in self.factory.known_peers:
 			self.factory.known_peers.pop(self.remote_nodeid)
-			if self.loop_ping.running() == True:
+			if self.loop_ping.running == True:
 				self.loop_ping.stop()
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'---------------Received Data---------------')
+		self.factory._debug(f'---------------Received Data---------------', self.node_type)
 		
 		for line in data.decode('utf-8').splitlines():
 			
 			line = line.strip()
 			current_data = json.loads(line)
-			pprint(current_data,indent=4,width=-1)
+			self.factory._debug(current_data,self.node_type,pprint=True)
 
 			info_type = current_data['information_type'] # Get the type of the request
 
@@ -85,29 +84,29 @@ class P2Protocol(Protocol):
 			elif info_type == 'post_transaction':
 				self.handel_transaction(line)
 
-		self.factory._debug('__________________________________________\n\n\n\n')
+		self.factory._debug('__________________________________________\n\n\n\n', self.node_type)
 
 	# Handling Initialisation
 	def send_ping(self):
 		"""Send ping to the connected node"""
 		ping_json = json.dumps({'information_type': 'ping'})
-		self.factory._debug(f'Pinging {self.remote_nodeid}')
+		self.factory._debug(f'Pinging {self.remote_nodeid}', self.node_type)
 		self.transport.write((ping_json + '\n').encode())
 
 	def send_pong(self):
 		"""Send pong to the connected node"""
 		pong_json = json.dumps({'information_type': 'pong'})
-		self.factory._debug(f'Ponging {self.remote_nodeid}')
+		self.factory._debug(f'Ponging {self.remote_nodeid}',self.node_type)
 		self.transport.write((pong_json + '\n').encode())
 
 	def handel_pong(self, pong):
 		"""Received a pong"""
-		self.factory._debug(f'Node {self.remote_nodeid} still active ::{pong}')
+		self.factory._debug(f'Node {self.remote_nodeid} still active ::{pong}', self.node_type)
 		self.last_ping = time()
 
 	def send_handshake(self):
 		"""Sends a handshake to the new connection"""
-		self.factory._debug(f'Sending handshake {self.transport.getPeer()}')
+		self.factory._debug(f'Sending handshake {self.transport.getPeer()}', self.node_type)
 		hs = json.dumps({
 						'information_type': 'handshake',
 						'nodeid': self.nodeid,
@@ -143,7 +142,7 @@ class P2Protocol(Protocol):
 				self.connect_to(ip=hs['my_ip'], port=hs['my_port'])
 
 			if self.loop_ping.running == False and self.node_type == 1:
-				self.factory._debug('Looping Call started')
+				self.factory._debug('Looping Call started', self.node_type)
 				self.loop_ping.start(60 * 5) # Start pinging every 5 mins
 
 	# Getting new peers
@@ -166,7 +165,7 @@ class P2Protocol(Protocol):
 			
 			# Creating A connection following Kademlia RT
 			if xor(int(number_queue),int(rank)) in max_pow_2(len(peers['known_peers'])+1):
-				self.factory._debug('Found New Node :: Connecting')
+				self.factory._debug('Found New Node :: Connecting', self.node_type)
 				self.connect_to(ip,port)
 
 
@@ -175,7 +174,7 @@ class P2Protocol(Protocol):
 		"""The method that sends a request to get a chain"""
 
 		ping_json = json.dumps({'information_type': 'get_blockchain'})
-		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}')
+		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}', self.node_type)
 		self.transport.write((ping_json + '\n').encode())
 
 	def send_blockchain(self):
@@ -197,9 +196,9 @@ class P2Protocol(Protocol):
 		blockchain = json.loads(blockchain)['blockchain']
 		if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
 			self.factory = blockchain
-			self.factory._debug('-> Updating Local Blockchain')
+			self.factory._debug('-> Updating Local Blockchain', self.node_type)
 		else:
-			self.factory._debug('-> Updating Local Blockchain -> Local Blockchain longer')
+			self.factory._debug('-> Updating Local Blockchain -> Local Blockchain longer', self.node_type)
 
 
 	# Sending/Posting/Handling the transactions
@@ -222,7 +221,7 @@ class P2Protocol(Protocol):
 		transaction = Transaction.json_to_transaction(new_transaction['data'])
 		self.factory.blockchain.create_append_transaction(transaction)
 		
-		self.factory._debug('Sending \'transaction_done\'')
+		self.factory._debug('Sending \'transaction_done\'', self.node_type)
 		done_json = json.dumps({'information_type': 'transaction_done'})
 		self.transport.write((done_json + '\n').encode())
 

@@ -10,6 +10,8 @@ from modules.utils import uuid_generator
 from modules.protocols.protocol_node import *
 from modules.blockchain.blockchain import *
 
+from termcolor import colored
+from pprint import pprint as pp
 
 class P2PFactory(Factory):
 	"""docstring for P2PFactory"""
@@ -42,8 +44,12 @@ class P2PFactory(Factory):
 		# Initiate handshake with seed server
 		self.update_peers()
 
-	def _debug(self, msg):
-		if self.debug: print(msg)
+	def _debug(self, msg, node_type=1, pprint=False):
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'red' if node_type == 1 else 'blue'))
+			else:
+				pp(msg, indent=4, width=4)
 
 	
 	def update_peers(self):

@@ -14,7 +14,6 @@ from modules.blockchain.book import Book
 from time import time
 from operator import xor
 import json
-from pprint import pprint
 
 
 class ClientProtocol(Protocol):
