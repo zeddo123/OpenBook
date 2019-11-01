@@ -52,7 +52,7 @@ class ClientProtocol(Protocol):
 				self.handel_post_peers(line)
 
 			elif info_type == 'transaction_done':
-				self.handel_done()
+				self.handel_done_transaction()
 
 	# Send ping to the connected node
 	def send_ping(self):

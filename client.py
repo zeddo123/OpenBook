@@ -6,8 +6,8 @@ from twisted.internet import reactor
 from modules.protocols.protocol_client import *
 
 
-if '__name__' == '__main__':
-
+if __name__ == '__main__':
+	print('--Start')
 	host, port = "localhost", 5989
 
 	seed_point = TCP4ClientEndpoint(reactor, host, 5989)

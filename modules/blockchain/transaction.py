@@ -33,11 +33,14 @@ class Transaction:
 	:meth to_json: returns a *dict* containing all the information
 
 	"""
-	def __init__(self, sender, recipient, book, transaction_type=1):
+	def __init__(self, sender, recipient, book, transaction_type=1, book_type='book'):
 		self.type = transaction_type
 		self.sender = sender if self.type == 1 else 'mining'
 		self.recipient = 'the-chain' if self.type == 1 else recipient
-		self.book = book.to_json() if self.type == 1 else None
+		if book_type == 'book':
+			self.book = book.to_json() if self.type == 1 else None
+		else:
+			self.book = book
 
 	
 	def to_json(self):
@@ -49,7 +52,7 @@ class Transaction:
 		}
 		return json_dict
 
-	@classmethod
+	@staticmethod
 	def json_to_transaction(json_transaction):
 		"""Convert a json/dict into a Transaction object
 		
@@ -64,4 +67,4 @@ class Transaction:
 		recipient = json_transaction['recipient']
 		book = json_transaction['book']
 		
-		return Transaction(sender,recipient,book,type_t)
+		return Transaction(sender,recipient,book,type_t,book_type='json')

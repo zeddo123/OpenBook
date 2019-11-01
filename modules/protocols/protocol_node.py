@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, '..')
 
 from modules.utils import max_pow_2
+from modules.blockchain.transaction import Transaction
 
 
 class P2Protocol(Protocol):
@@ -208,17 +209,16 @@ class P2Protocol(Protocol):
 		
 		[description]
 		:param new_transaction: the new transaction *{'information_type':'post_transaction','data':transaction}*
-		:type new_transaction: json/dict
+		:type new_transaction: str
 		"""
+		new_transaction = json.loads(new_transaction) # convert to json
+		
 		transaction = Transaction.json_to_transaction(new_transaction['data'])
 		self.factory.blockchain.create_append_transaction(transaction)
 		
 		self.factory._debug('Sending \'transaction_done\'')
 		done_json = json.dumps({'information_type': 'transaction_done'})
 		self.transport.write((done_json + '\n').encode())
-
-
-
 
 
 	# Starting a client instance
