@@ -5,35 +5,33 @@ from modules.blockchain.book import *
 
 class BlockChain:
 	"""BlockChain Object to be added to the chain
+
+	:Attributes:
+
+		:attr block_chain: All the blocks in the chain
+		:type block_chain: list
+		
+		:attr open_transaction: All the transactions to be added
+		:type open_transaction: list
+
+	:Methods:
 	
-	Attributes
-	==========
-	
-	:attr block_chain: All the blocks in the chain
-	:type block_chain: list
-	
-	:attr open_transaction: All the transactions to be added
-	:type open_transaction: list
-	
-	Methods
-	=======
-	
-	:meth __init__: Constructor of the class
-	
-	:meth to_json: Create a json file of the block-chain
-	
-	:meth valid_proof: Verify the hash guess
-	
-	:meth proof_of_work: Calculate the hash of the block and return nonce
-	
-	:meth create_append_transaction: Create and append a transaction to the open transaction list
-	
-	:meth mine_block: mine the new block + add the reward transaction
-	
-	:meth number_blocks: gives number of block in the chain
-	
-	:meth __str__: magic method, prints the chain and its blocks
-	
+		:meth __init__: Constructor of the class
+		
+		:meth to_json: Create a json file of the block-chain
+		
+		:meth valid_proof: Verify the hash guess
+		
+		:meth proof_of_work: Calculate the hash of the block and return nonce
+		
+		:meth create_append_transaction: Create and append a transaction to the open transaction list
+		
+		:meth mine_block: mine the new block + add the reward transaction
+		
+		:meth number_blocks: gives number of block in the chain
+		
+		:meth __str__: magic method, prints the chain and its blocks
+
 	"""
 
 	def __init__(self):
@@ -74,13 +72,12 @@ class BlockChain:
 	def proof_of_work(self):
 		"""Search for the right hash by adjusting the `nonce` value
 		
-		:nonce: field whose value is adjusted by miners 
-		so that the hash of the block will be
-		the current target (for now it's 42 as the first two chars) of the network
+		:var nonce: field whose value is adjusted by miners so that the hash of
+			the block will be the current target (for now it's 42 as the first two chars) of the network
+		:type nonce: int
 		
 		:returns: nonce of the hash
 		:rtype: int
-
 		"""
 
 		last_block = self.block_chain[-1]

@@ -6,33 +6,31 @@ from modules.blockchain.transaction import *
 
 class Block:
 	"""Block Object to be added to the chain
+
+	:Attributes:
+
+		:attr previous_hash: The previous hash of the block
+		:type previous_hash: str
+		
+		:attr transactions: All the transactions in the block
+		:type transactions: list
+		
+		:attr index: The number of the block in the chain
+		:type index: int
+		
+		:attr nonce: The nonce of the block **by default like bitcoin**
+		:type nonce: int
+		
+		:attr timestamp: The time in witch the block was created
+		:type timestamp: str
+		
+	:Methods:
 	
-	Attributes
-	==========
-	
-	:attr previous_hash: The previous hash of the block
-	:type previous_hash: str
-	
-	:attr transactions: All the transactions in the block
-	:type transactions: list
-	
-	:attr index: The number of the block in the chain
-	:type index: int
-	
-	:attr nonce: The nonce of the block **by default like bitcoin**
-	:type nonce: int
-	
-	:attr timestamp: The time in witch the block was created
-	:type timestamp: str
-	
-	Methods
-	=======
-	
-	:meth __init__: Constructor of the class
-	:meth to_json: Create a json file of the block
-	:meth hash_block: Calculate the hash of the block
-	:meth __str__: magic method, prints the block
-	
+		:meth __init__: Constructor of the class
+		:meth to_json: Create a json file of the block
+		:meth hash_block: Calculate the hash of the block
+		:meth __str__: magic method, prints the block
+		
 	"""
 
 	def __init__(self, previous_hash=None, transactions=[], index=0, nonce=208393):

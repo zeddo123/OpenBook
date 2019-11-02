@@ -20,8 +20,13 @@ from modules.blockchain.transaction import Transaction
 class P2Protocol(Protocol):
 	"""
 		docstring for the peer-2-peer protocol
-			node_type : 1 - Server instance of P2Protocol
-						2 - client instance of P2Protocol
+		
+		:attr node_type:
+
+		1. Server instance of P2Protocol
+		2. client instance of P2Protocol
+		
+		:type node_type: int
 	"""
 	def __init__(self, factory, node_type=1):
 		self.state = 'waiting'
@@ -44,7 +49,7 @@ class P2Protocol(Protocol):
 		self.my_ip = self.transport.getHost().host
 
 	def connectionLost(self, reason):
-		self.factory._debug(f'Connection Lost with {self.remote_nodeid}', self.node_type)
+		self.factory._debug(f'Connection Lost with {self.remote_nodeid} {reason}', self.node_type)
 		if self.remote_nodeid in self.factory.known_peers:
 			self.factory.known_peers.pop(self.remote_nodeid)
 			if self.loop_ping.running == True:
@@ -88,24 +93,49 @@ class P2Protocol(Protocol):
 
 	# Handling Initialisation
 	def send_ping(self):
-		"""Send ping to the connected node"""
+		"""Send ping to the connected node
+
+		:var ping_json: stores the ping request which will be sent
+		:type ping_json: json
+		"""
 		ping_json = json.dumps({'information_type': 'ping'})
 		self.factory._debug(f'Pinging {self.remote_nodeid}', self.node_type)
 		self.transport.write((ping_json + '\n').encode())
 
 	def send_pong(self):
-		"""Send pong to the connected node"""
+		"""Send pong to the connected node
+		
+		:var ping_json: stores the pong request which will be sent
+		:type ping_json: json
+		"""
 		pong_json = json.dumps({'information_type': 'pong'})
 		self.factory._debug(f'Ponging {self.remote_nodeid}',self.node_type)
 		self.transport.write((pong_json + '\n').encode())
 
 	def handel_pong(self, pong):
-		"""Received a pong"""
+		"""when receiving a pong we are sure that the node is alive
+		
+		we print a msg (in debug mode) notifing that the node is alive
+		and we save the time at which the pong was received
+
+		:param pong: the msg received
+		:type pong: str
+		"""
 		self.factory._debug(f'Node {self.remote_nodeid} still active ::{pong}', self.node_type)
 		self.last_ping = time()
 
 	def send_handshake(self):
-		"""Sends a handshake to the new connection"""
+		"""Sends a handshake to the new connection
+		
+		:var hs: contains the handshake request with all the information concerning the node
+		
+			* information_type
+			* nodeid
+			* ip of the node
+			* port of the node
+
+		:type hs: json
+		"""
 		self.factory._debug(f'Sending handshake {self.transport.getPeer()}', self.node_type)
 		hs = json.dumps({
 						'information_type': 'handshake',
@@ -116,7 +146,7 @@ class P2Protocol(Protocol):
 		self.transport.write((hs+'\n').encode())	
 
 	def handel_handshake(self, hs):
-		"""This method deals with what to do when a handshake is received
+		"""deals with what to do when a handshake is received
 
 		:param hs: handshake
 		:type hs: Json/dict
@@ -147,9 +177,11 @@ class P2Protocol(Protocol):
 
 	# Getting new peers
 	def handel_post_peers(self, peers):
-		"""This method deals with what to 
+		"""deals with what to 
 		do when a new list of node is received
 		
+		loop through the peers and connect to them by following the kademlia routing table
+
 		:param peers: list of new peers
 		:type peers: json/dict
 		"""
@@ -173,12 +205,16 @@ class P2Protocol(Protocol):
 	def send_get_blockchain(self):
 		"""The method that sends a request to get a chain"""
 
-		ping_json = json.dumps({'information_type': 'get_blockchain'})
+		block_json = json.dumps({'information_type': 'get_blockchain'})
 		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}', self.node_type)
-		self.transport.write((ping_json + '\n').encode())
+		self.transport.write((block_json + '\n').encode())
 
 	def send_blockchain(self):
-		"""method that sends the local chain to the connected node"""
+		"""sends the local chain to the connected node
+
+		:var serial_block: contains the local blockchain and information_type tag next to it
+		:serial_block: json
+		"""
 		serial_block = json.dumps({
 									'information_type': 'post_blockchain',
 									'blockchain': self.factory.blockchain.to_json()
@@ -186,9 +222,10 @@ class P2Protocol(Protocol):
 		self.transport.write(serial_block)
 
 	def handel_blockchain(self, blockchain):
-		"""This method deals with what to do when a block-chain is received
+		"""deals with what to do when a block-chain is received
 		
-		[description]
+		if the received blockchain is longer then we update the local one
+
 		:param blockchain: the new chain
 		:type blockchain: json/dict
 
@@ -210,9 +247,10 @@ class P2Protocol(Protocol):
 		pass
 
 	def handel_transaction(self, new_transaction):
-		"""this method deals with what to do when a transaction is received
+		"""what to do when a transaction is received
 		
-		[description]
+		when receiving the transaction, we verify it and add it the block
+
 		:param new_transaction: the new transaction *{'information_type':'post_transaction','data':transaction}*
 		:type new_transaction: str
 		"""

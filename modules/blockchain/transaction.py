@@ -2,35 +2,32 @@ import hashlib
 
 
 class Transaction:
-	"""
-	the transaction object contains all the information about a transaction
-
-	Attributes
-	==========
+	"""the transaction object contains all the information about a transaction
 	
-	:attr transaction_type: type tells us if a transaction if a reward one or not
-	if it's the case,no need to create a book object
-	:type transaction_type: int
+	:Attributes:
 
-	* 1 -> for a "Book" transaction 
-	* 2 -> for a reward transaction
+		:attr transaction_type: type tells us if a transaction if a reward one or not
+			if it's the case,no need to create a book object
 
+			* 1 for a "Book" transaction 
+			* 2 for a reward transaction
+		:type transaction_type: int
+		
+		
+		:attr sender: the name/id of the node creating the transaction
+		:type sender: str
+	
+		:attr recipient: depending on the type of transaction.the recipient can be
+			the block-chain or the miner in the case of a `reward transaction`
+		:type recipient: str
 
-	:attr sender: the name/id of the node creating the transaction
-	:type sender: str
+		:attr book: the book that will be stored in the transaction *(if type == 1)*
+		:type book: book object `book.py`
+	
+	:Methods:
 
-	:attr recipient: depending on the type of transaction.the recipient can be
-	the block-chain or the miner in the case of a `reward transaction`
-	:type recipient: str
-
-	:attr book: the book that will be stored in the transaction *(if type == 1)*
-	:type book: book object `book.py`
-
-	Methods
-	=======
-
-	:meth __init__: Constructor of the object
-	:meth to_json: returns a *dict* containing all the information
+		:meth __init__: Constructor of the object
+		:meth to_json: returns a *dict* containing all the information
 
 	"""
 	def __init__(self, sender, recipient, book, transaction_type=1, book_type='book'):

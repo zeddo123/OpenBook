@@ -1,7 +1,7 @@
 class Book:
 	"""The Book object contains all the information about a book"""
 	def __init__(self, title, author, date, genre):
-		"""Object contructor
+		"""Object constructor
 		
 		:param title: title of the Book
 		:type title: str
@@ -27,7 +27,7 @@ class Book:
 		to_json converts the object into a json object
 
 		:var json_dict: contains information about the book
-		:var json_dict: dict
+		:type json_dict: dict
 
 		:returns: a dict (json) containing of the information of the book
 		:rtype: dict
