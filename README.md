@@ -8,3 +8,13 @@ Every miner will be rewarded for mining the block, and adding books *'transactio
 ## Disclaimer
 In **no** way this is a polished or secure network.
 I'm just playing around,but i still think that's a great application for the blockchain
+
+# Use
+## Seed script output
+
+![alt text](https://raw.githubusercontent.com/zeddo123/OpenBook/master/docs/seed.png)
+
+
+## Node script output
+
+![alt text](https://raw.githubusercontent.com/zeddo123/OpenBook/master/docs/node.png)
