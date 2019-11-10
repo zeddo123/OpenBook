@@ -8,7 +8,8 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
-import pprint as pp
+from pprint import pprint as pp
+from termcolor import colored
 
 # Import from custom modules
 import sys
@@ -68,7 +69,6 @@ class P2Protocol(ClientProtocol):
 				:meth _debug: Prints helpful information **Override from ClientProtocol**
 	"""
 	def __init__(self, factory, node_type=1):
-		ClientProtocol.__init__()
 		self.state = 'waiting'
 		self.factory = factory
 		#uuid of the node
@@ -83,13 +83,15 @@ class P2Protocol(ClientProtocol):
 		self.loop_ping = LoopingCall(self.send_ping) 
 		self.last_ping = None
 
+		ClientProtocol.__init__(self)
+
 
 	def connectionMade(self):
-		self.factory._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}')
+		self._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}')
 		self.my_ip = self.transport.getHost().host
 
 	def connectionLost(self, reason):
-		self.factory._debug(f'Connection Lost with {self.remote_nodeid} {reason}')
+		self._debug(f'Connection Lost with {self.remote_nodeid} {reason}')
 		if self.remote_nodeid in self.factory.known_peers:
 			self.factory.known_peers.pop(self.remote_nodeid)
 			if self.loop_ping.running == True:

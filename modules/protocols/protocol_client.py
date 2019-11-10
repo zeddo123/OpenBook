@@ -14,6 +14,7 @@ from modules.blockchain.book import Book
 from time import time
 from operator import xor
 import json
+from pprint import pprint
 
 
 class ClientProtocol(Protocol):
@@ -39,6 +40,7 @@ class ClientProtocol(Protocol):
 				:meth connect_to: This method connect to a node *'as a client'*
 	"""
 	def __init__(self):
+		Protocol.__init__(self)
 		self.debug = True
 
 	def connectionMade(self):

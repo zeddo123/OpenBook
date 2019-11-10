@@ -8,9 +8,9 @@ from modules.protocols.protocol_client import *
 
 if __name__ == '__main__':
 	print('--Start')
-	host, port = "localhost", 5989
+	host, port = "localhost", 5000
 
-	seed_point = TCP4ClientEndpoint(reactor, host, 5989)
+	seed_point = TCP4ClientEndpoint(reactor, host, port)
 	connect = connectProtocol(seed_point, ClientProtocol())
 	connect.addCallback(lambda p: p.send_handshake())
 	reactor.run()
