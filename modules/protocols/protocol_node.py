@@ -138,10 +138,11 @@ class P2Protocol(ClientProtocol):
 		"""when receiving a pong we are sure that the node is alive
 		
 		we print a msg *(in debug mode)* notifing that the node is alive
-		and we save the time at which the pong was received
-
+			and we save the time at which the pong was received
+		
 		:param pong: the msg received
 		:type pong: str
+
 		*Override method from ClientProtocol*
 		"""
 		self._debug(f'Node {self.remote_nodeid} still active ::{pong}')
@@ -155,7 +156,9 @@ class P2Protocol(ClientProtocol):
 			* nodeid
 			* ip of the node
 			* port of the node
+
 		:type hs: json
+		
 		*Override method from ClientProtocol*
 		"""
 		self._debug(f'Sending handshake {self.transport.getPeer()}')
@@ -206,9 +209,9 @@ class P2Protocol(ClientProtocol):
 
 		:param peers: list of new peers
 		:type peers: json/dict
+		
 		*@override from ClientProtocol*
 		"""
-
 		peers = json.loads(peers)
 		number_queue = peers['number_queue']
 		self.remote_nodeid = peers['nodeid']
