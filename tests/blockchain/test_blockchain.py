@@ -30,8 +30,8 @@ class TestBlockchain(unittest.TestCase):
 	#@patch("modules.blockchain.blockchain.BlockChain.verify_transaction", return_value=True, autospec=True)
 	def test_create_append_transaction(self):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
-		transaction_1 = ("Joe", "recap", book_fortest)
-		transaction_2 = ("mama", "meme", book_fortest, 2)
+		transaction_1 = Transaction("Joe", "recap", book_fortest)
+		transaction_2 = Transaction("mama", "meme", book_fortest, 2)
 		blockchain_1 = BlockChain()
 		blockchain_2 = BlockChain()
 		with patch("modules.blockchain.blockchain.BlockChain.verify_transaction", autospec=True) as mocked_verify:

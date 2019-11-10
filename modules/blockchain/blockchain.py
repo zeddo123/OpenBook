@@ -37,12 +37,10 @@ class BlockChain:
 	def __init__(self):
 		"""Constructor of the class"""
 
-		self.block_chain = []
-
 		# Create the genesis block (the first block in the chain)
 		genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
-		
-		self.block_chain.append(genesis_block)
+
+		self.block_chain = [genesis_block]
 		self.open_transactions = []
 
 
@@ -119,7 +117,7 @@ class BlockChain:
 		nonce = self.proof_of_work() # Determine the nonce value
 
 		# Create the reward and append it to the open transactions
-		reward_transaction = Transaction(sender=None, recipient="recipient", book=None, transaction_type=2)
+		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, transaction_type=2)
 		self.open_transactions.append(reward_transaction)
 
 		# Create the new Block
@@ -161,6 +159,6 @@ if __name__ == '__main__':
 	#Exemple on how to use the blockchain object
 	blockchain = BlockChain()
 	print(blockchain)
-	blockchain.create_append_transaction(('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science')))
+	blockchain.create_append_transaction(Transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science')))
 	blockchain.mine_block('zeddo')
 	print(blockchain)
