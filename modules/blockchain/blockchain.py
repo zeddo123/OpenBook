@@ -101,7 +101,7 @@ class BlockChain:
 		if self.verify_transaction(new_transaction):
 			self.open_transactions.append(new_transaction)
 
-	def verify_transaction(self, new_transaction):
+	def verify_transaction(self, new_transaction): #TODO: complete this method
 		pass
 
 
@@ -119,7 +119,7 @@ class BlockChain:
 		nonce = self.proof_of_work() # Determine the nonce value
 
 		# Create the reward and append it to the open transactions
-		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, transaction_type=2)
+		reward_transaction = Transaction(sender=None, recipient="recipient", book=None, transaction_type=2)
 		self.open_transactions.append(reward_transaction)
 
 		# Create the new Block
@@ -142,13 +142,13 @@ class BlockChain:
 		dict_json = {}
 
 		# Loop through and convert the block to json objects
-		for i, block in enumerate(self.blockchain):
+		for i, block in enumerate(self.block_chain):
 			dict_json[i] = block.to_json()
 		
 		return dict_json
 
 	# Returs number of block in the chain
-	number_blocks = lambda self: len(self.blockchain)
+	number_blocks = lambda self: len(self.block_chain)
 
 	def __str__(self):
 		print(f'::{self.number_blocks()} blocks in the blockchain')
@@ -161,6 +161,6 @@ if __name__ == '__main__':
 	#Exemple on how to use the blockchain object
 	blockchain = BlockChain()
 	print(blockchain)
-	blockchain.create_append_transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science'))
+	blockchain.create_append_transaction(('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science')))
 	blockchain.mine_block('zeddo')
 	print(blockchain)

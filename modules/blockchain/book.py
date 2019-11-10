@@ -40,4 +40,11 @@ class Book:
 		}
 		return json_dict
 
-		
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
+
+	def __str__(self):
+		return str(self.to_json())

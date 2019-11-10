@@ -85,6 +85,12 @@ class Block:
 		"""
 		return hashlib.sha256(json.dumps(self.to_json()).encode()).hexdigest()
 
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
+
 	def __str__(self):
 		"""__str__ return the json object to be printed
 		:returns: text json object
