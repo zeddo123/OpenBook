@@ -13,8 +13,9 @@ I'm just playing around,but i still think that's a great application for the blo
 ## How to
 For now, There is 3 scripts **(*node.py*, *seed.py*, *client.py*)**.
 1. Run the seed script, this script must run in the beginning to link all the node.
-2. Run the node script it's the main script, that follow the protocol and interract with other nodes/peers and do all the blockchain stuff.
-3. This script is ran when we need to add a transaction into the chain.(This script needs to connect to the seed server to get the nodes)
+2. Run the node script(the main script),*node.py* follows the bloch-chain protocol and interact with other nodes/peers.
+*optional*
+3. This script is ran whenever we need to add a transaction into the chain.*(This script needs to connect to the seed server to get the nodes)*
 
 ## Seed script output
 
