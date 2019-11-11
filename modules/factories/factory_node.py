@@ -38,7 +38,7 @@ class P2PFactory(Factory):
 		self.server_peers = []
 
 		#Connect to the SeedSever
-		seed_point = TCP4ClientEndpoint(reactor, "localhost", 5989)
+		seed_point = TCP4ClientEndpoint(reactor, "localhost", 5000)
 		self.seed_connection = connectProtocol(seed_point, P2Protocol(self, node_type=2))
 
 		# Initiate handshake with seed server

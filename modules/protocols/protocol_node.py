@@ -8,6 +8,8 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
+from pprint import pprint as pp
+from termcolor import colored
 
 # Import from custom modules
 import sys
@@ -15,18 +17,56 @@ sys.path.insert(0, '..')
 
 from modules.utils import max_pow_2
 from modules.blockchain.transaction import Transaction
+from modules.protocols.protocol_client import ClientProtocol
 
 
-class P2Protocol(Protocol):
+class P2Protocol(ClientProtocol):
 	"""
-		docstring for the peer-2-peer protocol
+		the peer-2-peer protocol
 		
-		:attr node_type:
-
-		1. Server instance of P2Protocol
-		2. client instance of P2Protocol
-		
-		:type node_type: int
+		:Attributes:
+			:attr node_type:
+				1. Server instance of P2Protocol
+				2. client instance of P2Protocol
+			:type node_type: int
+			:attr state: the state of the protocol instance *("waiting" or "active")*
+			:type state: str
+			:attr factory: the node-factory object for interacting with global variables
+			:type factory: factory
+			:attr my_ip: the ip address of the current node
+			:type my_ip: str
+			:attr my_port: the ip port of the current node
+			:type my_port: int
+			:attr nodeid: the nodeid *uuid* of the current node
+			:type nodeid: str
+			:attr remote_nodeid: the nodeid *uuid* of the connected-to node
+			:type remote_nodeid: str
+			:attr loop_ping: a loopingCall to start pinging every 5 minutes
+			:type loop_ping: LoopingCall *twisted.internet.task*
+			:attr last_ping: Last time the node sent a ping
+			:type last_ping: int
+		:Methods:
+			:Twisted specific:
+				:meth connectionMade: triggered when the connection is made **Override from ClientProtocol**
+				:meth connectionLost: triggered when the connection is lost **Override from ClientProtocol**
+				:meth dataReceived: every time a data is received, this method is called **Override from ClientProtocol**
+			:Handling Initialisation:
+				:meth handel_pong: called when a pong is received **Override from ClientProtocol**
+				:meth send_handshake: Send all the informations about the node **Override from ClientProtocol**
+				:meth handel_handshake: called when a handshake is received
+			:Getting new peers:
+				:meth handel_post_peers: called when new peers are received **Override from ClientProtocol**
+			:Sending/Posting/Handling the block-chain:
+				:meth send_get_blockchain: Sends a *"get block-chain request"* to receive the node's chain
+				:meth send_blockchain: Sends the local chain
+				:meth handel_blockchain: called whenever a block-chain is received
+			:Sending/Posting/Handling the transactions:
+				:meth send_transaction: Sends a transaction
+				:meth handel_transaction: called whenever a transaction is received
+			:Starting a client instance:
+				:meth connect_to: This method connect to a node *'as a client'*
+			:Debug Mode:
+				:meth _debug: Prints helpful information **Override from ClientProtocol**
 	"""
 	def __init__(self, factory, node_type=1):
 		self.state = 'waiting'
@@ -43,13 +83,15 @@ class P2Protocol(Protocol):
 		self.loop_ping = LoopingCall(self.send_ping) 
 		self.last_ping = None
 
+		ClientProtocol.__init__(self)
+
 
 	def connectionMade(self):
-		self.factory._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}', self.node_type)
+		self._debug(f'{ "<-" if self.node_type == 1 else "->" }Connection Made with {self.transport.getPeer()}')
 		self.my_ip = self.transport.getHost().host
 
 	def connectionLost(self, reason):
-		self.factory._debug(f'Connection Lost with {self.remote_nodeid} {reason}', self.node_type)
+		self._debug(f'Connection Lost with {self.remote_nodeid} {reason}')
 		if self.remote_nodeid in self.factory.known_peers:
 			self.factory.known_peers.pop(self.remote_nodeid)
 			if self.loop_ping.running == True:
@@ -57,13 +99,13 @@ class P2Protocol(Protocol):
 
 
 	def dataReceived(self, data):
-		self.factory._debug(f'---------------Received Data---------------', self.node_type)
+		self._debug(f'---------------Received Data---------------')
 		
 		for line in data.decode('utf-8').splitlines():
 			
 			line = line.strip()
 			current_data = json.loads(line)
-			self.factory._debug(current_data,self.node_type,pprint=True)
+			self._debug(current_data, pprint=True)
 
 			info_type = current_data['information_type'] # Get the type of the request
 
@@ -89,54 +131,37 @@ class P2Protocol(Protocol):
 			elif info_type == 'post_transaction':
 				self.handel_transaction(line)
 
-		self.factory._debug('__________________________________________\n\n\n\n', self.node_type)
+		self._debug('__________________________________________\n\n\n\n')
 
 	# Handling Initialisation
-	def send_ping(self):
-		"""Send ping to the connected node
-
-		:var ping_json: stores the ping request which will be sent
-		:type ping_json: json
-		"""
-		ping_json = json.dumps({'information_type': 'ping'})
-		self.factory._debug(f'Pinging {self.remote_nodeid}', self.node_type)
-		self.transport.write((ping_json + '\n').encode())
-
-	def send_pong(self):
-		"""Send pong to the connected node
-		
-		:var ping_json: stores the pong request which will be sent
-		:type ping_json: json
-		"""
-		pong_json = json.dumps({'information_type': 'pong'})
-		self.factory._debug(f'Ponging {self.remote_nodeid}',self.node_type)
-		self.transport.write((pong_json + '\n').encode())
-
 	def handel_pong(self, pong):
 		"""when receiving a pong we are sure that the node is alive
 		
-		we print a msg (in debug mode) notifing that the node is alive
-		and we save the time at which the pong was received
-
+		we print a msg *(in debug mode)* notifing that the node is alive
+			and we save the time at which the pong was received
+		
 		:param pong: the msg received
 		:type pong: str
+
+		*Override method from ClientProtocol*
 		"""
-		self.factory._debug(f'Node {self.remote_nodeid} still active ::{pong}', self.node_type)
+		self._debug(f'Node {self.remote_nodeid} still active ::{pong}')
 		self.last_ping = time()
 
 	def send_handshake(self):
 		"""Sends a handshake to the new connection
 		
 		:var hs: contains the handshake request with all the information concerning the node
-		
 			* information_type
 			* nodeid
 			* ip of the node
 			* port of the node
 
 		:type hs: json
+		
+		*Override method from ClientProtocol*
 		"""
-		self.factory._debug(f'Sending handshake {self.transport.getPeer()}', self.node_type)
+		self._debug(f'Sending handshake {self.transport.getPeer()}')
 		hs = json.dumps({
 						'information_type': 'handshake',
 						'nodeid': self.nodeid,
@@ -157,7 +182,7 @@ class P2Protocol(Protocol):
 		self.remote_nodeid = hs['nodeid']
 
 		if self.remote_nodeid == self.nodeid:
-			self.factory._debug('Oups, Connected to myself')
+			self._debug('Oups, Connected to myself')
 			self.transport.loseConnection()
 		else:
 			self.factory.known_peers[self.remote_nodeid] = self
@@ -172,7 +197,7 @@ class P2Protocol(Protocol):
 				self.connect_to(ip=hs['my_ip'], port=hs['my_port'])
 
 			if self.loop_ping.running == False and self.node_type == 1:
-				self.factory._debug('Looping Call started', self.node_type)
+				self._debug('Looping Call started')
 				self.loop_ping.start(60 * 5) # Start pinging every 5 mins
 
 	# Getting new peers
@@ -184,8 +209,9 @@ class P2Protocol(Protocol):
 
 		:param peers: list of new peers
 		:type peers: json/dict
+		
+		*@override from ClientProtocol*
 		"""
-
 		peers = json.loads(peers)
 		number_queue = peers['number_queue']
 		self.remote_nodeid = peers['nodeid']
@@ -197,7 +223,7 @@ class P2Protocol(Protocol):
 			
 			# Creating A connection following Kademlia RT
 			if xor(int(number_queue),int(rank)) in max_pow_2(len(peers['known_peers'])+1):
-				self.factory._debug('Found New Node :: Connecting', self.node_type)
+				self._debug('Found New Node :: Connecting')
 				self.connect_to(ip,port)
 
 
@@ -206,7 +232,7 @@ class P2Protocol(Protocol):
 		"""The method that sends a request to get a chain"""
 
 		block_json = json.dumps({'information_type': 'get_blockchain'})
-		self.factory._debug(f'Send get_blockchain request {self.remote_nodeid}', self.node_type)
+		self._debug(f'Send get_blockchain request {self.remote_nodeid}')
 		self.transport.write((block_json + '\n').encode())
 
 	def send_blockchain(self):
@@ -233,9 +259,9 @@ class P2Protocol(Protocol):
 		blockchain = json.loads(blockchain)['blockchain']
 		if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
 			self.factory = blockchain
-			self.factory._debug('-> Updating Local Blockchain', self.node_type)
+			self._debug('-> Updating Local Blockchain')
 		else:
-			self.factory._debug('-> Updating Local Blockchain -> Local Blockchain longer', self.node_type)
+			self._debug('-> Updating Local Blockchain -> Local Blockchain longer')
 
 
 	# Sending/Posting/Handling the transactions
@@ -259,7 +285,7 @@ class P2Protocol(Protocol):
 		transaction = Transaction.json_to_transaction(new_transaction['data'])
 		self.factory.blockchain.create_append_transaction(transaction)
 		
-		self.factory._debug('Sending \'transaction_done\'', self.node_type)
+		self._debug('Sending \'transaction_done\'')
 		done_json = json.dumps({'information_type': 'transaction_done'})
 		self.transport.write((done_json + '\n').encode())
 
@@ -273,6 +299,7 @@ class P2Protocol(Protocol):
 		:type ip: str
 		:param port: port number
 		:type port: int
+		*@Override from ClientProtocol*
 		"""
 		def to_do(protocol):
 			protocol.send_handshake()
@@ -282,3 +309,18 @@ class P2Protocol(Protocol):
 		connection_point = TCP4ClientEndpoint(reactor, ip, int(port))
 		d = connectProtocol(connection_point, P2Protocol(self.factory,node_type=2))
 		d.addCallback(to_do)
+
+	def _debug(self, msg, pprint=False):
+		"""Prints helpful information in debug mode
+		
+		_debug print with different color depending on the node_type 
+		:param msg: the message to display
+		:type msg: string
+		:param pprint: prints a msg with a pprint *with indentation*, defaults to False
+		:type pprint: bool, optional
+		"""
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'red' if self.node_type == 1 else 'blue'))
+			else:
+				pp(msg, indent=4, width=4)
