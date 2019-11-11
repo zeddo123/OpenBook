@@ -51,7 +51,11 @@ class Block:
 		self.index = index
 		self.transactions = transactions
 		self.nonce = nonce
-		self.timestamp = datetime.datetime.now().__str__() 
+		self.timestamp = self.date_time_now()
+
+	def date_time_now(self):
+		""" date_time_now returns the current precise date and time as a string """
+		return datetime.datetime.now().__str__()
 
 	def to_json(self) -> dict:
 		"""

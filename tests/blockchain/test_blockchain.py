@@ -45,39 +45,33 @@ class TestBlockchain(unittest.TestCase):
 			mocked_verify.assert_called_with(blockchain_2, transaction_2)
 			self.assertEqual(blockchain_2.open_transactions, [])
 
-	def test_mine_block(self):
+	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
+	def test_mine_block(self, mock_datetime):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
 		transaction_1 = Transaction("Joe", "recap", book_fortest)
 		transaction_2 = Transaction("mama", "meme", book_fortest, 2)
 		block_0 = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
-		block_0.timestamp = '2019-10-16 19:49:28.800945'
 
 		blockchain_1 = BlockChain()
-		blockchain_1.block_chain[0].timestamp = '2019-10-16 19:49:28.800945'
 		blockchain_1.open_transactions.append(transaction_1)
 		op_trans_1 = blockchain_1.open_transactions
 		op_trans_1.append(Transaction(sender=None, recipient="recipient", book=None, transaction_type=2))
 		block_1 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', op_trans_1, index=1, nonce=208395)
-		block_1.timestamp = '2019-10-16 19:49:28.800945'
 
 		blockchain_2 = BlockChain()
-		blockchain_2.block_chain[0].timestamp = '2019-10-16 19:49:28.800945'
 		blockchain_2.open_transactions.append(transaction_2)
 		op_trans_2 = blockchain_2.open_transactions
 		op_trans_2.append(Transaction(sender=None, recipient="recipient", book=None, transaction_type=2))
 		block_2 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', op_trans_2, index=1, nonce=426969)
-		block_2.timestamp = '2019-10-16 19:49:28.800945'
 
 		with patch("modules.blockchain.blockchain.BlockChain.proof_of_work", autospec=True) as mocked_nonce:
 			mocked_nonce.return_value = 208395
 			blockchain_1.mine_block('zeddo')
-			blockchain_1.block_chain[1].timestamp = '2019-10-16 19:49:28.800945'
 			self.assertEqual(blockchain_1.block_chain, [block_0, block_1])
 			self.assertEqual(blockchain_1.open_transactions, [])
 
 			mocked_nonce.return_value = 426969
 			blockchain_2.mine_block('maistro')
-			blockchain_2.block_chain[1].timestamp = '2019-10-16 19:49:28.800945'
 			self.assertEqual(blockchain_2.block_chain, [block_0, block_2])
 			self.assertEqual(blockchain_2.open_transactions, [])
 
@@ -87,5 +81,3 @@ class TestBlockchain(unittest.TestCase):
 
 if __name__ == '__main__':
 	unittest.main()
-
-	#{'previous_hash': None, 'index': 0, 'transactions': [Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)], 'nonce': 208393, 'Timestamp': '2019-10-16 19:49:28.800945'})

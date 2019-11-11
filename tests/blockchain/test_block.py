@@ -2,13 +2,15 @@ import sys
 sys.path.append('../../')
 
 import unittest
+from unittest.mock import patch
 from modules.blockchain.block import Block
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 
 class TestBlock(unittest.TestCase):
 
-	def setUp(self):
+	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
+	def setUp(self, mock_datetime):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
 		trasaction_1_fortest = Transaction("not-mining", "not-data-base", book_fortest)
 		trasaction_2_fortest = Transaction("not-mining", "not-data-base", book_fortest, 2)
@@ -16,21 +18,13 @@ class TestBlock(unittest.TestCase):
 		self.transactions_result = [{'type': 1, 'sender': "not-mining", 'recipient': "the-chain", 'book': {'title': "Le Gène égoïste", 'author': "Richard Dawkins", 'date': "1976", 'genre': "Non-fiction"}}, 
 			{'type': 2, 'sender': "mining", 'recipient': "not-data-base", 'book': None}]
 		self.block_1 = Block()
-		self.block_1.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_2 = Block("49f68a5c8493ec2c0bf489821c21fc3b", transactions_fortest, 1, 258463)
-		self.block_2.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_3 = Block("49f68a5c8493ec2c0bf489821c21fc3b", transactions_fortest, 1)
-		self.block_3.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_4 = Block("49f68a5c8493ec2c0bf489821c21fc3b", transactions_fortest)
-		self.block_4.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_5 = Block("49f68a5c8493ec2c0bf489821c21fc3b")
-		self.block_5.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_6 = Block(transactions = transactions_fortest)
-		self.block_6.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_7 = Block(index = 1)
-		self.block_7.timestamp = '2019-10-16 19:49:28.800945'
 		self.block_8 = Block(nonce = 258463)
-		self.block_8.timestamp = '2019-10-16 19:49:28.800945'
 
 
 	def test_to_json(self):
