@@ -1,4 +1,3 @@
-import hashlib
 import sys
 sys.path.append('../../')
 
@@ -26,7 +25,67 @@ class TestBlockchain(unittest.TestCase):
 
 
 	def test_to_json(self):
-		pass	
+		self.assertEqual(self.blockchain_0.to_json(), 
+			{0: {
+				'previous_hash': None, 
+				'index': 0, 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'nonce': 208393, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}
+			})
+
+		self.blockchain_0.block_chain.append(self.block_0)
+		self.assertEqual(self.blockchain_0.to_json(),
+			{
+			0: {
+				'previous_hash': None, 
+				'index': 0, 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'nonce': 208393, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				},
+			1: {
+				'previous_hash': None, 
+				'index': 0, 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'nonce': 208393, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}
+			})
+		
+		self.blockchain_0.block_chain.extend([self.block_1, self.block_2])
+		self.assertEqual(self.blockchain_0.to_json(),
+			{
+			0: {
+				'previous_hash': None, 
+				'index': 0, 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'nonce': 208393, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}, 
+			1: {
+				'previous_hash': None, 
+				'index': 0, 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'nonce': 208393, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}, 
+			2: {
+				'previous_hash': 'ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', 
+				'index': 1, 
+				'transactions': [], 
+				'nonce': 208395, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}, 
+			3: {
+				'previous_hash': 'ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', 
+				'index': 1, 
+				'transactions': [], 
+				'nonce': 426969, 
+				'Timestamp': '2019-10-16 19:49:28.800945'
+				}
+			})
 
 
 	def test_valid_proof(self):

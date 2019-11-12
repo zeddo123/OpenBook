@@ -150,6 +150,12 @@ class BlockChain:
 	# Returs number of block in the chain
 	number_blocks = lambda self: len(self.block_chain)
 
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
+
 	def __str__(self):
 		print(f'::{self.number_blocks()} blocks in the blockchain')
 		for block, number in zip(self.block_chain, range(len(self.block_chain))):
