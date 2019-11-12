@@ -166,5 +166,17 @@ class TestBlockchain(unittest.TestCase):
 	def test_verify_transaction(self):
 		pass
 
+	def test_verify_blockchain(self):
+		self.blockchain_0.debug = False
+		# Test for Timestamps irregularities
+		# timestamps of block_0 == timestamps of block_1
+		self.blockchain_0.block_chain = [self.block_0, self.block_1]
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
+
+		# timestamps of block_0 < timestamps of block_1
+		self.block_1 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', [], index=1, nonce=208395)
+		self.blockchain_0.block_chain = [self.block_0, self.block_1]
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
+
 if __name__ == '__main__':
 	unittest.main()

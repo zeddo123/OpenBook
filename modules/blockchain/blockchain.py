@@ -4,6 +4,7 @@ from modules.blockchain.block import *
 from modules.blockchain.transaction import *
 from modules.blockchain.book import *
 
+from termcolor import colored
 
 class BlockChain:
 	"""BlockChain Object to be added to the chain
@@ -106,7 +107,7 @@ class BlockChain:
 		pass
 
 	@staticmethod
-	def verify_blockchain(blockchain):
+	def verify_blockchain(blockchain, flag_list=False):
 		"""Verify if a block-chain hasn't been tampered with
 		
 		loop through the block and verify the difference between the hashes
@@ -115,18 +116,25 @@ class BlockChain:
 		:returns: the chain is valid or not
 		:rtype: {bool}
 		"""
-		block_chain = blockchain.block_chain
+		if not flag_list:
+			block_chain = blockchain.block_chain
+		else:
+			block_chain = blockchain
 		flags = []
 
 		for block, i in zip(block_chain, range(1,len(block_chain))):
 			if block.hash != block.hash_block():
 				flags.append("[!] Found difference between the hash and the calculated one")
-			elif block[i-1].hash != block[i].previous_hash:
+			elif block_chain[i-1].hash != block_chain[i].previous_hash:
 				flags.append("[!] Found difference between the hash of a block and the one previous")
-			elif block[i-1].timestamp >= block[i].timestamp:
+			elif block_chain[i-1].timestamp >= block_chain[i].timestamp:
+				print(block_chain[i-1].timestamp)
+				print(block_chain[i].timestamp)
 				flags.append("[!] Found irregularity between the time-stamps")
 
-		self._debug(flags)
+		if not flag_list:
+			blockchain._debug(flags)
+
 		return True if len(flags) == 0 else False
 
 	def mine_block(self, recipient):
