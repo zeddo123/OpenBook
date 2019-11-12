@@ -147,6 +147,7 @@ class TestBlockchain(unittest.TestCase):
 		with patch("modules.blockchain.blockchain.BlockChain.proof_of_work", autospec=True) as mocked_nonce:
 			mocked_nonce.return_value = 208395
 			self.blockchain_1.mine_block('zeddo')
+			# TODO: Fix the assert Equal
 			self.assertEqual(self.blockchain_1.block_chain, [self.block_0, self.block_1])
 			self.assertEqual(self.blockchain_1.open_transactions, [])
 

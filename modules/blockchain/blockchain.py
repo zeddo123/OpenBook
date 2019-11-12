@@ -36,7 +36,7 @@ class BlockChain:
 
 	"""
 
-	def __init__(self):
+	def __init__(self, debug=True):
 		"""Constructor of the class"""
 
 		# Create the genesis block (the first block in the chain)
@@ -44,6 +44,7 @@ class BlockChain:
 
 		self.block_chain = [genesis_block]
 		self.open_transactions = []
+		self.debug = debug
 
 
 	def valid_proof(self, last_hash, nonce):
@@ -81,7 +82,7 @@ class BlockChain:
 		"""
 
 		last_block = self.block_chain[-1]
-		last_hash = last_block.hash_block()
+		last_hash = last_block.hash
 
 		nonce = 0
 		while not self.valid_proof(last_hash, nonce):
@@ -104,6 +105,29 @@ class BlockChain:
 	def verify_transaction(self, new_transaction): #TODO: complete this method
 		pass
 
+	@staticmethod
+	def verify_blockchain(blockchain):
+		"""Verify if a block-chain hasn't been tampered with
+		
+		loop through the block and verify the difference between the hashes
+		:param blockchain: the block-chain to be verified
+		:type blockchain: BlockChain *-blockchain.py*
+		:returns: the chain is valid or not
+		:rtype: {bool}
+		"""
+		block_chain = blockchain.block_chain
+		flags = []
+
+		for block, i in zip(block_chain, range(1,len(block_chain))):
+			if block.hash != block.hash_block():
+				flags.append("[!] Found difference between the hash and the calculated one")
+			elif block[i-1].hash != block[i].previous_hash:
+				flags.append("[!] Found difference between the hash of a block and the one previous")
+			elif block[i-1].timestamp >= block[i].timestamp:
+				flags.append("[!] Found irregularity between the time-stamps")
+
+		self._debug(flags)
+		return True if len(flags) == 0 else False
 
 	def mine_block(self, recipient):
 		"""This method mine the new block with the opentransaction list
@@ -114,7 +138,7 @@ class BlockChain:
 		:returns: None
 		"""
 		last_block = self.block_chain[-1] # Get the Last block
-		last_hash = last_block.hash_block() # Get the hash of the last block
+		last_hash = last_block.hash # Get the hash of the last block
 
 		nonce = self.proof_of_work() # Determine the nonce value
 
@@ -143,7 +167,7 @@ class BlockChain:
 
 		# Loop through and convert the block to json objects
 		for i, block in enumerate(self.block_chain):
-			dict_json[i] = block.to_json()
+			dict_json[i] = block.to_json(hash=True)
 		
 		return dict_json
 
@@ -162,6 +186,21 @@ class BlockChain:
 			print('number\n',number)
 			print('block\n', block)
 		return ''
+
+	def _debug(self, msg, pprint=False):
+		"""Prints helpful information in debug mode
+		
+		_debug print with different color depending on the node_type 
+		:param msg: the message to display
+		:type msg: string
+		:param pprint: prints a msg with a pprint *with indentation*, defaults to False
+		:type pprint: bool, optional
+		"""
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'magenta'))
+			else:
+				pp(msg, indent=4, width=4)
 
 if __name__ == '__main__':
 	#Exemple on how to use the blockchain object

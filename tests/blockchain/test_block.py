@@ -29,56 +29,56 @@ class TestBlock(unittest.TestCase):
 
 
 	def test_to_json(self):
-		self.assertEqual(self.block_1.to_json(), {
+		self.assertEqual(self.block_1.to_json(hash=True), {
 			'previous_hash': None,
 			'index': 0,
 			'transactions': [],
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_2.to_json(), {
+		self.assertEqual(self.block_2.to_json(hash=True), {
 			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
 			'index': 1,
 			'transactions': self.transactions_result,
 			'nonce': 258463,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_3.to_json(), {
+		self.assertEqual(self.block_3.to_json(hash=True), {
 			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
 			'index': 1,
 			'transactions': self.transactions_result,
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_4.to_json(), {
+		self.assertEqual(self.block_4.to_json(hash=True), {
 			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
 			'index': 0,
 			'transactions': self.transactions_result,
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_5.to_json(), {
+		self.assertEqual(self.block_5.to_json(hash=True), {
 			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
 			'index': 0,
 			'transactions': [],
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_6.to_json(), {
+		self.assertEqual(self.block_6.to_json(hash=True), {
 			'previous_hash': None,
 			'index': 0,
 			'transactions': self.transactions_result,
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_7.to_json(), {
+		self.assertEqual(self.block_7.to_json(hash=True), {
 			'previous_hash': None,
 			'index': 1,
 			'transactions': [],
 			'nonce': 208393,
 			'Timestamp': '2019-10-16 19:49:28.800945'
 		})
-		self.assertEqual(self.block_8.to_json(), {
+		self.assertEqual(self.block_8.to_json(hash=True), {
 			'previous_hash': None,
 			'index': 0,
 			'transactions': [],
