@@ -148,6 +148,7 @@ class TestBlockchain(unittest.TestCase):
 			mocked_nonce.return_value = 208395
 			self.blockchain_1.mine_block('zeddo')
 			# TODO: Fix the assert Equal
+			# Issue '#48' on taiga
 			self.assertEqual(self.blockchain_1.block_chain, [self.block_0, self.block_1])
 			self.assertEqual(self.blockchain_1.open_transactions, [])
 
