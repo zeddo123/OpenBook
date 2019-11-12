@@ -171,11 +171,15 @@ class TestBlockchain(unittest.TestCase):
 		self.blockchain_0.debug = False
 		# Test for Timestamps irregularities
 		# timestamps of block_0 == timestamps of block_1
+		block0_hash = self.block_0.hash_block()
+		self.block_0.hash = block0_hash
+		self.block_1.previous_hash = block0_hash
 		self.blockchain_0.block_chain = [self.block_0, self.block_1]
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
 
 		# timestamps of block_0 < timestamps of block_1
-		self.block_1 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', [], index=1, nonce=208395)
+		self.block_1 = Block(block0_hash, [], index=1, nonce=208395)
+		#print([self.block_0, self.block_1])
 		self.blockchain_0.block_chain = [self.block_0, self.block_1]
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
 
