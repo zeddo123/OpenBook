@@ -7,6 +7,7 @@ from modules.blockchain.block import Block
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 
+
 class TestBlock(unittest.TestCase):
 
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)

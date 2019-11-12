@@ -1,3 +1,5 @@
+import hashlib
+
 from modules.blockchain.block import *
 from modules.blockchain.transaction import *
 from modules.blockchain.book import *
@@ -62,7 +64,7 @@ class BlockChain:
 
 		guess_hash = hashlib.sha256(guess).hexdigest()
 
-		print(guess_hash)
+		#print(guess_hash)
 
 		return guess_hash[0:2] == '42' # 42 is the difficulty to find the hash
 

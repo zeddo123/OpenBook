@@ -5,6 +5,7 @@ import unittest
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 
+
 class TestTransaction(unittest.TestCase):
 
 	def setUp(self):
