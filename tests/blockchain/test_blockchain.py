@@ -53,7 +53,7 @@ class TestBlockchain(unittest.TestCase):
 				'Timestamp': '2019-10-16 19:49:28.800945'
 				}
 			})
-		
+
 		self.blockchain_0.block_chain.extend([self.block_1, self.block_2])
 		self.assertEqual(self.blockchain_0.to_json(),
 			{
@@ -157,6 +157,11 @@ class TestBlockchain(unittest.TestCase):
 
 
 	def test_number_blocks(self):
+		self.assertEqual(self.blockchain_0.number_blocks(), 1)
+		self.blockchain_0.block_chain.extend([self.block_0, self.block_1, self.block_2])
+		self.assertEqual(self.blockchain_0.number_blocks(), 4)
+
+	def test_verify_transaction(self):
 		pass
 
 if __name__ == '__main__':
