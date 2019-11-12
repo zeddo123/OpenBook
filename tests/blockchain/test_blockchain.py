@@ -11,14 +11,15 @@ from modules.blockchain.block import Block
 
 class TestBlockchain(unittest.TestCase):
 
+	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
-	def setUp(self, mock_datetime):
+	def setUp(self, mock_datetime, mock_hash_block):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
 		self.transaction_1 = Transaction("Joe", "recap", book_fortest)
 		self.transaction_2 = Transaction("mama", "meme", book_fortest, 2)
 		self.block_0 = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
-		self.block_1 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', [], index=1, nonce=208395)
-		self.block_2 = Block('ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', [], index=1, nonce=426969)
+		self.block_1 = Block('96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', [], index=1, nonce=208395)
+		self.block_2 = Block('96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', [], index=1, nonce=426969)
 		self.blockchain_0 = BlockChain()
 		self.blockchain_1 = BlockChain()
 		self.blockchain_2 = BlockChain()
@@ -72,14 +73,14 @@ class TestBlockchain(unittest.TestCase):
 				'Timestamp': '2019-10-16 19:49:28.800945'
 				}, 
 			2: {
-				'previous_hash': 'ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', 
+				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
 				'index': 1, 
 				'transactions': [], 
 				'nonce': 208395, 
 				'Timestamp': '2019-10-16 19:49:28.800945'
 				}, 
 			3: {
-				'previous_hash': 'ece8c1c5b1d61f6455afb421c3869ab51ef12e4b2f1cfde652602a6e83fdd4ac', 
+				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
 				'index': 1, 
 				'transactions': [], 
 				'nonce': 426969, 
@@ -111,8 +112,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), True)
 
 
-	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
-	def test_proof_of_work(self, mock_hash_block):
+	def test_proof_of_work(self):
 		with patch("modules.blockchain.blockchain.BlockChain.valid_proof", autospec=True) as mocked_valid_proof:
 			mocked_valid_proof = True
 			self.assertEqual(self.blockchain_0.proof_of_work(), 0)
@@ -131,18 +131,19 @@ class TestBlockchain(unittest.TestCase):
 			self.assertEqual(self.blockchain_2.open_transactions, [])
 
 
+	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
-	def test_mine_block(self, mock_datetime):
+	def test_mine_block(self, mock_datetime, mock_hash_block):
 
 		self.blockchain_1.open_transactions.append(self.transaction_1)
-		op_trans_1 = self.blockchain_1.open_transactions
-		op_trans_1.append(Transaction(sender=None, recipient="recipient", book=None, transaction_type=2))
-		self.block_1.transactions = op_trans_1
+		op_trans_1 = list(self.blockchain_1.open_transactions)
+		op_trans_1.append(Transaction(sender=None, recipient='zeddo', book=None, transaction_type=2))
+		self.block_1.transactions = list(op_trans_1)
 
 		self.blockchain_2.open_transactions.append(self.transaction_2)
-		op_trans_2 = self.blockchain_2.open_transactions
-		op_trans_2.append(Transaction(sender=None, recipient="recipient", book=None, transaction_type=2))
-		self.block_2.transactions = op_trans_2
+		op_trans_2 = list(self.blockchain_2.open_transactions)
+		op_trans_2.append(Transaction(sender=None, recipient='maistro', book=None, transaction_type=2))
+		self.block_2.transactions = list(op_trans_2)
 
 		with patch("modules.blockchain.blockchain.BlockChain.proof_of_work", autospec=True) as mocked_nonce:
 			mocked_nonce.return_value = 208395
