@@ -8,6 +8,8 @@ from twisted.internet import reactor
 from time import time
 from operator import xor
 import json
+
+# Debug libs
 from pprint import pprint as pp
 from termcolor import colored
 

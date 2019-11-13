@@ -14,7 +14,10 @@ from modules.blockchain.book import Book
 from time import time
 from operator import xor
 import json
-from pprint import pprint
+
+# Debug libs
+from pprint import pprint as pp
+from termcolor import colored
 
 
 class ClientProtocol(Protocol):
@@ -58,7 +61,7 @@ class ClientProtocol(Protocol):
 			line = line.strip()
 			current_data = json.loads(line)
 			info_type = current_data['information_type']
-			pprint(current_data,indent=4,width=4)
+			self._debug(current_data)
 
 			if info_type == 'handshake':
 				self.state = 'Active'
@@ -166,10 +169,17 @@ class ClientProtocol(Protocol):
 		except:
 			return False
 
-	def _debug(self, msg):
+	def _debug(self, msg, pprint=False):
 		"""Prints helpful information in debug mode
 		
+		_debug print with different color depending on the node_type 
 		:param msg: the message to display
 		:type msg: string
+		:param pprint: prints a msg with a pprint *with indentation*, defaults to False
+		:type pprint: bool, optional
 		"""
-		if self.debug: print(msg)
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'blue'))
+			else:
+				pp(msg, indent=4, width=4)
