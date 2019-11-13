@@ -10,11 +10,20 @@ from modules.utils import uuid_generator
 from modules.protocols.protocol_node import *
 from modules.blockchain.blockchain import *
 
-from termcolor import colored
-from pprint import pprint as pp
 
 class P2PFactory(Factory):
-	"""docstring for P2PFactory"""
+	"""P2PFactory
+	:Attributes:
+		:blockchain: the blockchain object of the node
+		:debug: a debug attribute, used to print helpful messages
+		:active: The state of the node -in general
+		:max_peers: the maximum number of peers the node can connect-to
+		:port: the listening port of the node
+		:uuid: the universal identifier of the node
+		:known_peers: all the know_peers
+		:server_peers: all the peers which the current node connected-to as a client
+		:seed_point: the clientEndpoint to connect to the seed server
+	"""
 	
 	def __init__(self, port, max_peers=0, debug=True):
 		self.blockchain = BlockChain()
@@ -44,14 +53,6 @@ class P2PFactory(Factory):
 		# Initiate handshake with seed server
 		self.update_peers()
 
-	def _debug(self, msg, node_type=1, pprint=False):
-		if self.debug:
-			if not pprint:
-				print(colored(msg,'red' if node_type == 1 else 'blue'))
-			else:
-				pp(msg, indent=4, width=4)
-
-	
 	def update_peers(self):
 		# Send Request to get new_peers from seed server
 		self.seed_connection.addCallback(lambda p : p.send_handshake())
