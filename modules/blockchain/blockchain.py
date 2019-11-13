@@ -122,16 +122,15 @@ class BlockChain:
 			block_chain = blockchain
 		flags = []
 
-		for block, i in zip(block_chain, range(1,len(block_chain))):
+		for i in range(1,len(block_chain)):
+			block = block_chain[i]
+			block1 = block_chain[i - 1]
+
 			if block.hash != block.hash_block():
 				flags.append("[!] Found difference between the hash and the calculated one")
-			elif block_chain[i-1].hash != block_chain[i].previous_hash:
-				#print(f"\nblock_chain[{i-1}] : {block_chain[i-1].hash}")
-				#print(f"block_chain[{i}] : {block_chain[i].previous_hash}")
+			elif block1.hash != block.previous_hash:
 				flags.append("[!] Found difference between the hash of a block and the one previous")
-			elif block_chain[i-1].timestamp >= block_chain[i].timestamp:
-				#print(f"\nblock_chain[{i-1}] : {block_chain[i-1].timestamp}")
-				#print(f"block_chain[{i}] : {block_chain[i].timestamp}")
+			elif block1.timestamp >= block.timestamp:
 				flags.append("[!] Found irregularity between the time-stamps")
 
 		if not flag_list:

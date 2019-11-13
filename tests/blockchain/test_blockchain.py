@@ -168,20 +168,42 @@ class TestBlockchain(unittest.TestCase):
 		pass
 
 	def test_verify_blockchain(self):
+		
+		block_0 = Block(None, [], index=1, nonce=208395)
+		block_1 = Block(block_0.hash, [], index=2)
+		
+		self.blockchain_0.block_chain = [block_0, block_1]
 		self.blockchain_0.debug = False
+
 		# Test for Timestamps irregularities
+		
 		# timestamps of block_0 == timestamps of block_1
-		block0_hash = self.block_0.hash_block()
-		self.block_0.hash = block0_hash
-		self.block_1.previous_hash = block0_hash
-		self.blockchain_0.block_chain = [self.block_0, self.block_1]
+		block_1.timestamp = block_0.timestamp
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
 
 		# timestamps of block_0 < timestamps of block_1
-		self.block_1 = Block(block0_hash, [], index=1, nonce=208395)
-		#print([self.block_0, self.block_1])
-		self.blockchain_0.block_chain = [self.block_0, self.block_1]
+		block_1.timestamp = block_1.date_time_now()
+		block_1.hash = block_1.hash_block()
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
+
+		#Test for hash and previous hash
+		
+		# block_0.hash == block_1.previous_hash
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
+		
+		# block_0.hash != block_1.previous_hash
+		block_1.previous_hash = "random SHA_256 hash"
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
+		block_1.previous_hash = block_0.hash
+
+		# Test for hash irregularities
+		
+		# hash of block == calculated one
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
+		
+		# hash of block different for the calculated one 
+		block_1.transactions = [Transaction(sender=None, recipient='maistro', book=None, transaction_type=2)]
+		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
 
 if __name__ == '__main__':
 	unittest.main()
