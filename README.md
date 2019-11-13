@@ -30,6 +30,7 @@ For now, There is 3 scripts **(*node.py*, *seed.py*, *client.py*)**.
 
 # Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+You can join us on [taiga](https://tree.taiga.io/project/zeddo123-open-book/timeline)
 ## Documentation
 The Documentation is hosted on readthedocs
 https://openbook.readthedocs.io
