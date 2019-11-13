@@ -6,7 +6,39 @@ import json
 from modules.protocols.protocol_client import ClientProtocol
 
 class SeedProtocol(ClientProtocol):
-	"""docstring for the peer-2-peer protocol"""
+	"""SeedProtocol-the protocol that the seed server will follow
+	
+	:Attributes:
+		:attr state: the state of the protocol instance *("waiting" or "active")*
+		:type state: string
+
+		:attr factory: the node-factory object for interacting with global variables
+		:type factory: Factory -*Twisted*
+
+		:attr remote_nodeid: the *uuid* of the connected-to node
+		:type remote_nodeid: string
+
+		:attr remote_ip: the ip address of the remote node
+		:type remote_ip: string
+
+		:attr loop_ping: a loopingCall to start pinging every 5 minutes
+		:type loop_ping: LoopingCall -*twisted.internet.task*
+
+		:attr last_ping: Last time the node sent a ping
+		:type last_ping: int
+	:Methods:
+		:Twisted specific:
+			:connectionLost: triggered when the connection is made -**Override from ClientProtocol**
+			:dataReceived: triggered when the connection is lost -**Override from ClientProtocol**
+		:Seed-Sever specific:
+			:format_peers: create a list of all the known nodes with their ip, port and number in the queue 
+				-*{'number_queue' : nodeis:ip:port}*
+			:send_peers: Send all the known nodes to the new node.
+			:_handel_node: Called when a new node connect to the seed server.
+		:Handling Initialisation:
+			:handel_pong: called when a pong is received.
+			:handel_handshake: called when a handshake is received.
+	"""
 	def __init__(self, factory):
 		self.state = 'waiting'
 		self.factory = factory
@@ -55,6 +87,12 @@ class SeedProtocol(ClientProtocol):
 
 
 	def format_peers(self):
+		"""Create a formated dict, that holds all the information about the nodes *{'number_queue' : nodeis:ip:port}*
+		
+		the dict formated to be easy to send in a json file
+		:returns: dict/json containing all the known nodes
+		:rtype: {dict}
+		"""
 		formated_peers = {}
 		for idn, peer in self.factory.known_peers.items():
 			if peer != self:
@@ -62,10 +100,29 @@ class SeedProtocol(ClientProtocol):
 		return formated_peers
 
 	def handel_pong(self, pong):
+		"""called when a pong is received
+		
+		when a pong is received, we can be sure about the state of the connected node
+		:param pong: the pong msg
+		:type pong: str
+		"""
 		self._debug(f'Node {self.remote_nodeid} still active ::{pong}')
 		self.last_ping = time()
 
 	def send_peers(self):
+		"""Send all the known nodes.
+		
+		the send_peers msg will contain all the information about the seed server and his nodes::
+
+		``
+		{
+			'information_type': 'post_peers',
+			'nodeid': 'SeedServer',
+			'number_queue': x,
+			'known_peers': list of all node,
+		}
+		``
+		"""
 		self._debug(f'Sending Peers {self.transport.getPeer()}')
 		hs = json.dumps({
 						'information_type': 'post_peers',
@@ -77,6 +134,14 @@ class SeedProtocol(ClientProtocol):
 		self.transport.write((hs+'\n').encode())
 
 	def handel_handshake(self, hs):
+		"""called when a handshake is received.
+		
+		the handshake is either received from a client or a node
+		for a client: we simply send a list of all the nodes
+		for a node: first we add the node in the register and send back the list of the nodes 
+		:param hs: the handshake data
+		:type hs: string
+		"""
 		hs = json.loads(hs)
 		
 		#Extraction remote node information
@@ -92,6 +157,8 @@ class SeedProtocol(ClientProtocol):
 			self._handel_node(hs)
 
 	def _handel_node(self, hs):
+		"""Called when a new node connect to the seed server.
+		"""
 		self.number_queue = str(len(self.factory.known_peers))
 		self.factory.known_peers[self.remote_nodeid+':'+ self.number_queue] = self
 		self.send_peers()
