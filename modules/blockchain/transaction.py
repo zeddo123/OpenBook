@@ -49,6 +49,15 @@ class Transaction:
 		}
 		return json_dict
 
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
+
+	def __str__(self):
+		return str(self.to_json())
+
 	@staticmethod
 	def json_to_transaction(json_transaction):
 		"""Convert a json/dict into a Transaction object

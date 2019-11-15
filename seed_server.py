@@ -11,7 +11,7 @@ if __name__ == '__main__':
 	
 	arg = parser.parse_args()
 	port = int(arg.port)
-	port = 5989 # for the development
+	#port = 5989 # for the development
 	
 	if arg.debug:
 		print('[Seeds Server is Up]')

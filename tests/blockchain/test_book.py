@@ -4,6 +4,7 @@ sys.path.append('../../')
 import unittest
 from modules.blockchain.book import Book
 
+
 class TestBook(unittest.TestCase):
 
 	def setUp(self):

@@ -51,9 +51,14 @@ class Block:
 		self.index = index
 		self.transactions = transactions
 		self.nonce = nonce
-		self.timestamp = datetime.datetime.now().__str__() 
+		self.timestamp = self.date_time_now()
+		self.hash = self.hash_block()
 
-	def to_json(self) -> dict:
+	def date_time_now(self):
+		""" date_time_now returns the current precise date and time as a string """
+		return datetime.datetime.now().__str__()
+
+	def to_json(self, hash=False) -> dict:
 		"""
 		to_json converts the object into a json object
 
@@ -76,6 +81,10 @@ class Block:
 			'nonce': self.nonce,
 			'Timestamp': self.timestamp
 		}
+		
+		if hash == False:
+			json_dict['hash'] = self.hash
+
 		return json_dict
 
 	def hash_block(self) -> str:
@@ -83,7 +92,13 @@ class Block:
 		:returns: hash of the block
 		:rtype: str
 		"""
-		return hashlib.sha256(json.dumps(self.to_json()).encode()).hexdigest()
+		return hashlib.sha256(json.dumps(self.to_json(hash=True)).encode()).hexdigest()
+
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
 
 	def __str__(self):
 		"""__str__ return the json object to be printed

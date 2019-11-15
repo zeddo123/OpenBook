@@ -15,10 +15,35 @@ from time import time
 from operator import xor
 import json
 
+# Debug libs
+from pprint import pprint as pp
+from termcolor import colored
+
 
 class ClientProtocol(Protocol):
-	
+	"""
+		the Client protocol
+		
+		:Attributes:
+			:attr debug: debug mode, *default to **True***
+			:type debug: bool
+		:Methods:
+			:Twisted specific:
+				:meth connectionMade: triggered when the connection is made
+				:meth connectionLost: triggered when the connection is lost
+				:meth dataReceived: every time a data is received, this method is called
+			:Handling Initialisation:
+				:meth send_ping: Send a ping request
+				:meth send_pong: Respond with a pong
+				:meth handel_pong: called when a pong is received
+				:meth send_handshake: Send all the informations about the node
+			:Getting new peers:
+				:meth handel_post_peers: called when new peers are received
+			:Starting a client instance:
+				:meth connect_to: This method connect to a node *'as a client'*
+	"""
 	def __init__(self):
+		Protocol.__init__(self)
 		self.debug = True
 
 	def connectionMade(self):
@@ -36,10 +61,9 @@ class ClientProtocol(Protocol):
 			line = line.strip()
 			current_data = json.loads(line)
 			info_type = current_data['information_type']
-			pprint(current_data,indent=4,width=4)
+			self._debug(current_data)
 
 			if info_type == 'handshake':
-				self.handel_handshake(line)
 				self.state = 'Active'
 			
 			elif info_type == 'ping':
@@ -55,12 +79,22 @@ class ClientProtocol(Protocol):
 
 	# Send ping to the connected node
 	def send_ping(self):
+		"""Send ping to the connected node
+
+		:var ping_json: stores the ping request which will be sent
+		:type ping_json: json
+		"""
 		ping_json = json.dumps({'information_type': 'ping'})
 		self._debug(f'Pinging {self.remote_nodeid}')
 		self.transport.write((ping_json + '\n').encode())
 
 	# Send pong to the connected node
 	def send_pong(self):
+		"""Send pong to the connected node
+		
+		:var ping_json: stores the pong request which will be sent
+		:type ping_json: json
+		"""
 		pong_json = json.dumps({'information_type': 'pong'})
 		self._debug(f'Ponging {self.remote_nodeid}')
 		self.transport.write((pong_json + '\n').encode())
@@ -71,6 +105,15 @@ class ClientProtocol(Protocol):
 
 
 	def send_handshake(self):
+		"""Sends a handshake to the new connection
+		
+		:var hs: contains the handshake request with all the information concerning the client
+			* information_type
+			* id 
+			* ip of the client
+			* port of the client
+		:type hs: json
+		"""
 		self._debug(f'Sending handshake {self.transport.getPeer()}')
 		hs = json.dumps({
 						'information_type': 'handshake',
@@ -78,11 +121,7 @@ class ClientProtocol(Protocol):
 						'my_ip': '',
 						'my_port': ''
 						})
-		self.transport.write((hs+'\n').encode())	
-
-
-	def handel_handshake(self, hs):
-		pass
+		self.transport.write((hs+'\n').encode())
 
 	def handel_post_peers(self, peers):
 		self._debug(':: Post peers Received')
@@ -130,5 +169,17 @@ class ClientProtocol(Protocol):
 		except:
 			return False
 
-	def _debug(self, msg):
-		if self.debug: print(msg)
+	def _debug(self, msg, pprint=False):
+		"""Prints helpful information in debug mode
+		
+		_debug print with different color depending on the node_type 
+		:param msg: the message to display
+		:type msg: string
+		:param pprint: prints a msg with a pprint *with indentation*, defaults to False
+		:type pprint: bool, optional
+		"""
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'blue'))
+			else:
+				pp(msg, indent=4, width=4)

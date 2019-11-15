@@ -5,6 +5,7 @@ import unittest
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 
+
 class TestTransaction(unittest.TestCase):
 
 	def setUp(self):
@@ -16,7 +17,7 @@ class TestTransaction(unittest.TestCase):
 		self.assertEqual(self.transaction_1.to_json(), {
 			'type': 1, 
 			'sender': "not-mining", 
-			'recipient': "data-base", 
+			'recipient': "the-chain", 
 			'book': {
 				'title': "Le Gène égoïste", 
 				'author': "Richard Dawkins", 

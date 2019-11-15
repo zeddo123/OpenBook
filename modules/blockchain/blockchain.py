@@ -1,7 +1,10 @@
+import hashlib
+
 from modules.blockchain.block import *
 from modules.blockchain.transaction import *
 from modules.blockchain.book import *
 
+from termcolor import colored
 
 class BlockChain:
 	"""BlockChain Object to be added to the chain
@@ -34,16 +37,15 @@ class BlockChain:
 
 	"""
 
-	def __init__(self):
+	def __init__(self, debug=True):
 		"""Constructor of the class"""
-
-		self.block_chain = []
 
 		# Create the genesis block (the first block in the chain)
 		genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
-		
-		self.block_chain.append(genesis_block)
+
+		self.block_chain = [genesis_block]
 		self.open_transactions = []
+		self.debug = debug
 
 
 	def valid_proof(self, last_hash, nonce):
@@ -64,7 +66,7 @@ class BlockChain:
 
 		guess_hash = hashlib.sha256(guess).hexdigest()
 
-		print(guess_hash)
+		#print(guess_hash)
 
 		return guess_hash[0:2] == '42' # 42 is the difficulty to find the hash
 
@@ -81,7 +83,7 @@ class BlockChain:
 		"""
 
 		last_block = self.block_chain[-1]
-		last_hash = last_block.hash_block()
+		last_hash = last_block.hash
 
 		nonce = 0
 		while not self.valid_proof(last_hash, nonce):
@@ -101,9 +103,40 @@ class BlockChain:
 		if self.verify_transaction(new_transaction):
 			self.open_transactions.append(new_transaction)
 
-	def verify_transaction(self, new_transaction):
+	def verify_transaction(self, new_transaction): #TODO: complete this method
 		pass
 
+	@staticmethod
+	def verify_blockchain(blockchain, flag_list=False):
+		"""Verify if a block-chain hasn't been tampered with
+		
+		loop through the block and verify the difference between the hashes
+		:param blockchain: the block-chain to be verified
+		:type blockchain: BlockChain *-blockchain.py*
+		:returns: the chain is valid or not
+		:rtype: {bool}
+		"""
+		if not flag_list:
+			block_chain = blockchain.block_chain
+		else:
+			block_chain = blockchain
+		flags = []
+
+		for i in range(1,len(block_chain)):
+			block = block_chain[i]
+			block1 = block_chain[i - 1]
+
+			if block.hash != block.hash_block():
+				flags.append("[!] Found difference between the hash and the calculated one")
+			elif block1.hash != block.previous_hash:
+				flags.append("[!] Found difference between the hash of a block and the one previous")
+			elif block1.timestamp >= block.timestamp:
+				flags.append("[!] Found irregularity between the time-stamps")
+
+		if not flag_list:
+			blockchain._debug(flags)
+
+		return True if len(flags) == 0 else False
 
 	def mine_block(self, recipient):
 		"""This method mine the new block with the opentransaction list
@@ -114,7 +147,7 @@ class BlockChain:
 		:returns: None
 		"""
 		last_block = self.block_chain[-1] # Get the Last block
-		last_hash = last_block.hash_block() # Get the hash of the last block
+		last_hash = last_block.hash # Get the hash of the last block
 
 		nonce = self.proof_of_work() # Determine the nonce value
 
@@ -142,13 +175,19 @@ class BlockChain:
 		dict_json = {}
 
 		# Loop through and convert the block to json objects
-		for i, block in enumerate(self.blockchain):
-			dict_json[i] = block.to_json()
+		for i, block in enumerate(self.block_chain):
+			dict_json[i] = block.to_json(hash=True)
 		
 		return dict_json
 
 	# Returs number of block in the chain
-	number_blocks = lambda self: len(self.blockchain)
+	number_blocks = lambda self: len(self.block_chain)
+
+	def __eq__(self, other):
+		return (self.to_json() == other.to_json())
+
+	def __repr__(self):
+		return str(self.to_json())
 
 	def __str__(self):
 		print(f'::{self.number_blocks()} blocks in the blockchain')
@@ -157,10 +196,25 @@ class BlockChain:
 			print('block\n', block)
 		return ''
 
+	def _debug(self, msg, pprint=False):
+		"""Prints helpful information in debug mode
+		
+		_debug print with different color depending on the node_type 
+		:param msg: the message to display
+		:type msg: string
+		:param pprint: prints a msg with a pprint *with indentation*, defaults to False
+		:type pprint: bool, optional
+		"""
+		if self.debug:
+			if not pprint:
+				print(colored(msg,'magenta'))
+			else:
+				pp(msg, indent=4, width=4)
+
 if __name__ == '__main__':
 	#Exemple on how to use the blockchain object
 	blockchain = BlockChain()
 	print(blockchain)
-	blockchain.create_append_transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science'))
+	blockchain.create_append_transaction(Transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science')))
 	blockchain.mine_block('zeddo')
 	print(blockchain)
