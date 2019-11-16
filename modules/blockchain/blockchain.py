@@ -162,6 +162,18 @@ class BlockChain:
 
 		self.open_transactions = []
 
+	def fork_chain(self, index=None :int) -> BlockChain:
+		"""Create a fork *-copy* of the block-chain with index*- beginning* preferred
+		
+		The copy is made by a deep-copy
+		:param index: the start of the *forking*, defaults to None
+		:type index: int, optional
+		"""
+
+		copy = copy.deepcopy(self)
+		copy.block_chain = copy.block_chain[index:]
+		return copy
+
 	def to_json(self):
 		"""
 		to_json converts the object into a json object
