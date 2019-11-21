@@ -1,4 +1,5 @@
 import hashlib
+import copy
 
 from modules.blockchain.block import *
 from modules.blockchain.transaction import *
@@ -44,6 +45,9 @@ class BlockChain:
 		genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
 
 		self.block_chain = [genesis_block]
+		
+		# a list containing all the forks of a chain at the same level
+		self.chains_same_level = [self.block_chain]
 		self.open_transactions = []
 		self.debug = debug
 
@@ -162,7 +166,7 @@ class BlockChain:
 
 		self.open_transactions = []
 
-	def fork_chain(self, index=None :int) -> BlockChain:
+	def fork_chain(self, index=None):
 		"""Create a fork *-copy* of the block-chain with index*- beginning* preferred
 		
 		The copy is made by a deep-copy
