@@ -1,6 +1,5 @@
 import hashlib
 
-
 class Transaction:
 	"""the transaction object contains all the information about a transaction
 	
