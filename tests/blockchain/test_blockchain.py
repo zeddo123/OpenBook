@@ -1,6 +1,8 @@
 import sys
 sys.path.append('../../')
 
+
+from contextlib import contextmanager
 import unittest
 from unittest.mock import patch
 from modules.blockchain.blockchain import BlockChain
@@ -204,6 +206,29 @@ class TestBlockchain(unittest.TestCase):
 		# hash of block different for the calculated one 
 		block_1.transactions = [Transaction(sender=None, recipient='maistro', book=None, transaction_type=2)]
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
+
+	def test_fork_chain(self):
+		chain = BlockChain()
+		chain.block_chain = [self.block_0, self.block_1, self.block_2]
+		
+		# Testing the equality of a fork (big fork)
+		copy_chain = chain.fork_chain()
+		self.assertEqual(chain == copy_chain, True)
+
+		# Testing the equality of a fork if the fork is partial
+		copy_chain = chain.fork_chain(1)
+		print(chain)
+		with blockchain_restore(chain, [self.block_1, self.block_2], attr='block_chain') as tmp_chain:
+			self.assertEqual(tmp_chain == copy_chain, True)
+
+@contextmanager
+def blockchain_restore(chain, value, attr):
+	try:
+		old_attr = getattr(chain,attr)
+		setattr(chain, attr, value)
+		yield chain
+	finally:
+		setattr(chain, attr, old_attr)
 
 if __name__ == '__main__':
 	unittest.main()

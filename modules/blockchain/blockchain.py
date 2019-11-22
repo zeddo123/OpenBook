@@ -1,5 +1,5 @@
 import hashlib
-import copy
+import copy as cp
 
 from modules.blockchain.block import *
 from modules.blockchain.transaction import *
@@ -174,7 +174,7 @@ class BlockChain:
 		:type index: int, optional
 		"""
 
-		copy = copy.deepcopy(self)
+		copy = cp.deepcopy(self)
 		copy.block_chain = copy.block_chain[index:]
 		return copy
 
@@ -200,7 +200,7 @@ class BlockChain:
 	number_blocks = lambda self: len(self.block_chain)
 
 	def __eq__(self, other):
-		return (self.to_json() == other.to_json())
+		return self.to_json() == other.to_json()
 
 	def __repr__(self):
 		return str(self.to_json())
