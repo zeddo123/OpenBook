@@ -55,6 +55,22 @@ class SPKeys():
 
 		return signature
 	
+
+def verify_signature(public_key, signature, bite_data):
+	x509 = crypto.X509()
+	x509.set_pubkey(public_key)
+	try:
+		if not(crypto.verify(x509, signature, bite_data, 'sha256')):
+			return True
+		else:
+			return False
+	except:
+		return False
+
 #test
-k = SPKeys()
-k.sign(b"Hello WOrld")
+#k = SPKeys()
+#signature = k.sign(b"Hello WOrld")
+#if verify_signature(k.public_key, signature, b"Hello WOrld"):
+#	print("signature Verified!")
+#else:
+#	print("signature not valid!")
