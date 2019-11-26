@@ -14,24 +14,24 @@ class Cryptog():
 		dirpath = os.getcwd()
 		self._dirpath = dirpath.replace('/modules/blockchain', '')
 
-		if not(os.path.isdir(self._dirpath+'/crypto')):
-			os.mkdir(self._dirpath+'/crypto')
-			os.mkdir(self._dirpath+'/crypto/.private')
-			os.mkdir(self._dirpath+'/crypto/public')
-			os.mkdir(self._dirpath+'/crypto/signature')
+		if not(os.path.isdir('../../crypto')):
+			os.mkdir('../../crypto')
+			os.mkdir('../../crypto/.private')
+			os.mkdir('../../crypto/public')
+			os.mkdir('../../crypto/signature')
 		else:
-			if not(os.path.isdir(self._dirpath+'/crypto/.private')):
-				os.mkdir(self._dirpath+'/crypto/.private')
-			if not(os.path.isdir(self._dirpath+'/crypto/public')):
-				os.mkdir(self._dirpath+'/crypto/public')
+			if not(os.path.isdir('../../crypto/.private')):
+				os.mkdir('../../crypto/.private')
+			if not(os.path.isdir('../../crypto/public')):
+				os.mkdir('../../crypto/public')
 
 		self.private_key = None
 		self.public_key = None
 
 	def load_privatekey(self, generate=False):
 		if not(generate):
-			if os.path.isfile(self._dirpath+'/crypto/.private/private_key.pem'):
-				with open(self._dirpath+'/crypto/.private/private_key.pem', 'rb') as f:
+			if os.path.isfile('../../crypto/.private/private_key.pem'):
+				with open('../../crypto/.private/private_key.pem', 'rb') as f:
 					private_key_data = f.read()
 			else:
 				raise OwnKeyMissing('private key not found')
@@ -43,10 +43,10 @@ class Cryptog():
 			private_key_data = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
 			public_key_data = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
 
-			with open(self._dirpath+'/crypto/.private/private_key.pem', 'wb') as f:
+			with open('../../crypto/.private/private_key.pem', 'wb') as f:
 				f.write(private_key_data)
 
-			with open(self._dirpath+'/crypto/public/public_key.pem', 'wb') as f:
+			with open('../../crypto/public/public_key.pem', 'wb') as f:
 				f.write(public_key_data)
 
 		self.private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key_data)
@@ -54,16 +54,16 @@ class Cryptog():
 
 	def load_publickey(self, sender=None, own=True):
 		if own:
-			if os.path.isfile(self._dirpath+'/crypto/public/public_key.pem'):
-				with open(self._dirpath+'/crypto/public/public_key.pem', 'rb') as f:
+			if os.path.isfile('../../crypto/public/public_key.pem'):
+				with open('../../crypto/public/public_key.pem', 'rb') as f:
 					public_key_data = f.read()
 					self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
 			else:
 				raise OwnKeyMissing('own public key not found')
 
 		else:
-			if os.path.isfile(self._dirpath+'/crypto/public/'+sender+'.pem'):
-				with open(self._dirpath+'/crypto/public/'+sender+'.pem', 'rb') as f:
+			if os.path.isfile('../../crypto/public/'+sender+'.pem'):
+				with open('../../crypto/public/'+sender+'.pem', 'rb') as f:
 					public_key_data = f.read()
 					self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
 			else:
@@ -73,10 +73,10 @@ class Cryptog():
 		""" sign given data (!data already converted to byte!) """
 		signature = crypto.sign(self.private_key, bite_data, 'sha256')
 
-		if not(os.path.isdir(self._dirpath+'/crypto/signature')):	
-			os.mkdir(self._dirpath+'/crypto/signature')
+		if not(os.path.isdir('../../crypto/signature')):	
+			os.mkdir('../../crypto/signature')
 
-		with open(self._dirpath+'/crypto/signature/signature.pem', 'wb') as f:
+		with open('../../crypto/signature/signature.pem', 'wb') as f:
 			f.write(signature)
 
 		return signature
