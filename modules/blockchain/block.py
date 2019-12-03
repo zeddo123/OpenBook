@@ -33,7 +33,7 @@ class Block:
 		
 	"""
 
-	def __init__(self, previous_hash=None, transactions=[], index=0, nonce=208393):
+	def __init__(self, previous_hash=None, transactions=[], index=0, nonce=208393, override=False):
 		"""Block class constructor
 		:param previous_hash: The previous hash of the block
 		:type previous_hash: str
@@ -51,8 +51,8 @@ class Block:
 		self.index = index
 		self.transactions = transactions
 		self.nonce = nonce
-		self.timestamp = self.date_time_now()
-		self.hash = self.hash_block()
+		self.timestamp = self.date_time_now() if not override else None
+		self.hash = self.hash_block() if not override else None
 
 	def date_time_now(self):
 		""" date_time_now returns the current precise date and time as a string """
@@ -106,3 +106,18 @@ class Block:
 		:rtype: str
 		"""
 		return str(self.to_json())
+
+	@staticmethod
+	def json_to_block(b_json):
+		block = Block(override=True)
+
+		for key, val in b_json.items():
+			if key == 'transactions':
+				# When converting the json object to a block
+				# Converting all the transaction to Transaction object is necessary
+				for i in val:
+					block.transactions.append(Transaction.json_to_transaction(i))
+			else:	
+				setattr(block,key,val)
+
+		return block

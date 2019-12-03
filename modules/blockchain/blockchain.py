@@ -38,11 +38,14 @@ class BlockChain:
 
 	"""
 
-	def __init__(self, debug=True):
+	def __init__(self, override=False, debug=True):
 		"""Constructor of the class"""
 
 		# Create the genesis block (the first block in the chain)
-		genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+		if not override:
+			genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+		else:
+			genesis_block = None
 
 		self.block_chain = [genesis_block]
 		
@@ -211,6 +214,15 @@ class BlockChain:
 			print('number\n',number)
 			print('block\n', block)
 		return ''
+	
+	@staticmethod
+	def json_to_blockchain(bc_json):
+		bc = BlockChain(override=True)
+		for block in bc_json.values():
+			bc.blockchain.append(Block.json_to_block(block))
+
+		return bc
+
 
 	def _debug(self, msg, pprint=False):
 		"""Prints helpful information in debug mode

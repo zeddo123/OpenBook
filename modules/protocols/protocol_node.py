@@ -126,7 +126,7 @@ class P2Protocol(ClientProtocol):
 			elif info_type == 'get_blockchain':
 				self.send_blockchain()
 			elif info_type == 'post_blockchain':
-				pass
+				self.handel_post_blockchain()
 			
 			elif info_type == 'get_transaction':
 				pass
@@ -249,7 +249,7 @@ class P2Protocol(ClientProtocol):
 								})
 		self.transport.write(serial_block)
 
-	def handel_blockchain(self, blockchain):
+	def handel_post_blockchain(self, blockchain):
 		"""deals with what to do when a block-chain is received
 		
 		if the received blockchain is longer then we update the local one
