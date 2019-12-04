@@ -109,14 +109,14 @@ class Block:
 
 	@staticmethod
 	def json_to_block(b_json):
-		block = Block(override=True)
-
+		bk = Block(transactions=[],override=True)
 		for key, val in b_json.items():
 			if key == 'transactions':
-				# When converting the json object to a block
+				# When converting the json object to a bk
 				# Converting all the transaction to Transaction object is necessary
 				for i in val:
-					block.transactions.append(Transaction.json_to_transaction(i))
+					bk.transactions.append(Transaction.json_to_transaction(i))
 			else:	
-				setattr(block,key.lower(),val)
-		return block
+				setattr(bk,key.lower(),val)
+
+		return bk

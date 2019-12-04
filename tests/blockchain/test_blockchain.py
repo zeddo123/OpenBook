@@ -230,7 +230,7 @@ class TestBlockchain(unittest.TestCase):
 
 		bc_json = self.blockchain_0.to_json()
 		new_bc = BlockChain.json_to_blockchain(bc_json)
-		print(new_bc,self.blockchain_0)
+
 		self.assertEqual(new_bc,self.blockchain_0)
 
 @contextmanager
