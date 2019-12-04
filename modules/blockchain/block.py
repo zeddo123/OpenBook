@@ -119,5 +119,4 @@ class Block:
 					block.transactions.append(Transaction.json_to_transaction(i))
 			else:	
 				setattr(block,key.lower(),val)
-
 		return block

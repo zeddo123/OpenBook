@@ -221,6 +221,18 @@ class TestBlockchain(unittest.TestCase):
 		with blockchain_restore(chain, [self.block_1, self.block_2], attr='block_chain') as tmp_chain:
 			self.assertEqual(tmp_chain == copy_chain, True)
 
+	def test_json_to_blockchain(self):
+		block_0 = Block(None, [], index=1, nonce=208395)
+		block_1 = Block(block_0.hash, [], index=2)
+		
+		self.blockchain_0.block_chain = [block_0, block_1]
+		self.blockchain_0.debug = False
+
+		bc_json = self.blockchain_0.to_json()
+		new_bc = BlockChain.json_to_blockchain(bc_json)
+		print(new_bc,self.blockchain_0)
+		self.assertEqual(new_bc,self.blockchain_0)
+
 @contextmanager
 def blockchain_restore(chain, value, attr):
 	try:

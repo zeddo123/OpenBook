@@ -44,10 +44,11 @@ class BlockChain:
 		# Create the genesis block (the first block in the chain)
 		if not override:
 			genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+			self.block_chain = [genesis_block]
 		else:
 			genesis_block = None
+			self.block_chain = []
 
-		self.block_chain = [genesis_block]
 		
 		# a list containing all the forks of a chain at the same level
 		self.chains_same_level = [self.block_chain]
@@ -195,7 +196,7 @@ class BlockChain:
 
 		# Loop through and convert the block to json objects
 		for i, block in enumerate(self.block_chain):
-			dict_json[i] = block.to_json(hash=True)
+			dict_json[i] = block.to_json()
 		
 		return dict_json
 
@@ -219,7 +220,7 @@ class BlockChain:
 	def json_to_blockchain(bc_json):
 		bc = BlockChain(override=True)
 		for block in bc_json.values():
-			bc.blockchain.append(Block.json_to_block(block))
+			bc.block_chain.append(Block.json_to_block(block))
 
 		return bc
 
