@@ -217,7 +217,7 @@ class TestBlockchain(unittest.TestCase):
 
 		# Testing the equality of a fork if the fork is partial
 		copy_chain = chain.fork_chain(1)
-		print(chain)
+
 		with blockchain_restore(chain, [self.block_1, self.block_2], attr='block_chain') as tmp_chain:
 			self.assertEqual(tmp_chain == copy_chain, True)
 

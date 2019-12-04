@@ -118,6 +118,6 @@ class Block:
 				for i in val:
 					block.transactions.append(Transaction.json_to_transaction(i))
 			else:	
-				setattr(block,key,val)
+				setattr(block,key.lower(),val)
 
 		return block

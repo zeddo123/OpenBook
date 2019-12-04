@@ -15,9 +15,13 @@ class TestBlock(unittest.TestCase):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
 		trasaction_1_fortest = Transaction("not-mining", "not-data-base", book_fortest)
 		trasaction_2_fortest = Transaction("not-mining", "not-data-base", book_fortest, 2)
+		
 		transactions_fortest = [trasaction_1_fortest, trasaction_2_fortest]
-		self.transactions_result = [{'type': 1, 'sender': "not-mining", 'recipient': "the-chain", 'book': {'title': "Le Gène égoïste", 'author': "Richard Dawkins", 'date': "1976", 'genre': "Non-fiction"}}, 
-			{'type': 2, 'sender': "mining", 'recipient': "not-data-base", 'book': None}]
+		self.transactions_result = [
+			{'type': 1, 'sender': "not-mining", 'recipient': "the-chain", 'book': {'title': "Le Gène égoïste", 'author': "Richard Dawkins", 'date': "1976", 'genre': "Non-fiction"}}, 
+			{'type': 2, 'sender': "mining", 'recipient': "not-data-base", 'book': None}
+		]
+		
 		self.block_1 = Block()
 		self.block_2 = Block("49f68a5c8493ec2c0bf489821c21fc3b", transactions_fortest, 1, 258463)
 		self.block_3 = Block("49f68a5c8493ec2c0bf489821c21fc3b", transactions_fortest, 1)
@@ -29,6 +33,7 @@ class TestBlock(unittest.TestCase):
 
 
 	def test_to_json(self):
+		# TODO: The first test seams to fail, because of a difference in the transactions
 		self.assertEqual(self.block_1.to_json(hash=True), {
 			'previous_hash': None,
 			'index': 0,
@@ -104,6 +109,16 @@ class TestBlock(unittest.TestCase):
 			'f5765a40ef87969bcec557812b8392746b5f77203a3ad1d7d639aa4d39724fa7')
 		self.assertEqual(self.block_8.hash_block(), 
 			'099773753a36cb773cb62f5990b6dd83d8212d07cbb01e10c2aae206cbe2e8f5')
+
+	def test_json_to_block(self):
+		b_json = self.block_2.to_json()
+		new_block = Block.json_to_block(b_json)
+
+		self.assertEqual(new_block,self.block_2)
+
+		#verify if the transactions are of a list type
+		self.assertEqual(type(new_block.transactions),list)
+
 
 if __name__ == '__main__':
 	unittest.main()
