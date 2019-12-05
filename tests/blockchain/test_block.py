@@ -111,10 +111,12 @@ class TestBlock(unittest.TestCase):
 			'099773753a36cb773cb62f5990b6dd83d8212d07cbb01e10c2aae206cbe2e8f5')
 
 	def test_json_to_block(self):
-		b_json = self.block_2.to_json()
-		new_block = Block.json_to_block(b_json)
+		block_3 = Block("49f68a5c8493ec2c0bf489821c21fc3b")
 
-		self.assertEqual(new_block,self.block_2)
+		b_json = block_3.to_json()
+		new_block = Block.json_to_block(b_json)
+		
+		self.assertEqual(new_block,block_3)
 
 		#verify if the transactions are of a list type
 		self.assertEqual(type(new_block.transactions),list)
