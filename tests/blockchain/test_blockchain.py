@@ -34,7 +34,8 @@ class TestBlockchain(unittest.TestCase):
 				'index': 0, 
 				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
 				'nonce': 208393, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[0].hash
 				}
 			})
 
@@ -46,14 +47,16 @@ class TestBlockchain(unittest.TestCase):
 				'index': 0, 
 				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
 				'nonce': 208393, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[0].hash
 				},
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
 				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
 				'nonce': 208393, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[1].hash
 				}
 			})
 
@@ -65,28 +68,32 @@ class TestBlockchain(unittest.TestCase):
 				'index': 0, 
 				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
 				'nonce': 208393, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[0].hash
 				}, 
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
 				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
 				'nonce': 208393, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[1].hash
 				}, 
 			2: {
 				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
 				'index': 1, 
 				'transactions': [], 
 				'nonce': 208395, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[2].hash
 				}, 
 			3: {
 				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
 				'index': 1, 
 				'transactions': [], 
 				'nonce': 426969, 
-				'Timestamp': '2019-10-16 19:49:28.800945'
+				'Timestamp': '2019-10-16 19:49:28.800945',
+				'hash': self.blockchain_0.block_chain[3].hash
 				}
 			})
 
