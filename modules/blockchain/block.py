@@ -49,7 +49,7 @@ class Block:
 		"""
 		self.previous_hash = previous_hash
 		self.index = index
-		self.transactions = transactions
+		self.transactions = list(transactions)
 		self.nonce = nonce
 		self.timestamp = self.date_time_now() if not override else None
 		self.hash = self.hash_block() if not override else None
