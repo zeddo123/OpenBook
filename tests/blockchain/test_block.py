@@ -6,9 +6,15 @@ from unittest.mock import patch
 from modules.blockchain.block import Block
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
-
+import ast
 
 class TestBlock(unittest.TestCase):
+	
+	@classmethod
+	def setUpClass(cls):
+		# getting the json files necessary for the test
+		with open("tests/blockchain/test_files/json_block.json",'r') as f:
+			cls.jsons = ast.literal_eval(f.read())
 
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
 	def setUp(self, mock_datetime):
@@ -34,62 +40,14 @@ class TestBlock(unittest.TestCase):
 
 	def test_to_json(self):
 		# TODO: The first test seams to fail, because of a difference in the transactions
-		self.assertEqual(self.block_1.to_json(hash=True), {
-			'previous_hash': None,
-			'index': 0,
-			'transactions': [],
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_2.to_json(hash=True), {
-			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
-			'index': 1,
-			'transactions': self.transactions_result,
-			'nonce': 258463,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_3.to_json(hash=True), {
-			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
-			'index': 1,
-			'transactions': self.transactions_result,
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_4.to_json(hash=True), {
-			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
-			'index': 0,
-			'transactions': self.transactions_result,
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_5.to_json(hash=True), {
-			'previous_hash': "49f68a5c8493ec2c0bf489821c21fc3b",
-			'index': 0,
-			'transactions': [],
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_6.to_json(hash=True), {
-			'previous_hash': None,
-			'index': 0,
-			'transactions': self.transactions_result,
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_7.to_json(hash=True), {
-			'previous_hash': None,
-			'index': 1,
-			'transactions': [],
-			'nonce': 208393,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
-		self.assertEqual(self.block_8.to_json(hash=True), {
-			'previous_hash': None,
-			'index': 0,
-			'transactions': [],
-			'nonce': 258463,
-			'Timestamp': '2019-10-16 19:49:28.800945'
-		})
+		self.assertEqual(self.block_1.to_json(hash=True), self.jsons[0])
+		self.assertEqual(self.block_2.to_json(hash=True), self.jsons[1])
+		self.assertEqual(self.block_3.to_json(hash=True), self.jsons[2])
+		self.assertEqual(self.block_4.to_json(hash=True), self.jsons[3])
+		self.assertEqual(self.block_5.to_json(hash=True), self.jsons[4])
+		self.assertEqual(self.block_6.to_json(hash=True), self.jsons[5])
+		self.assertEqual(self.block_7.to_json(hash=True), self.jsons[6])
+		self.assertEqual(self.block_8.to_json(hash=True), self.jsons[7])
 
 
 	def test_hash_block(self):
