@@ -30,7 +30,7 @@ class Transaction:
 		:meth to_json: returns a *dict* containing all the information
 
 	"""
-	def __init__(self, sender, recipient, book, private_key, transaction_type=1, book_type='book'):
+	def __init__(self, sender, recipient, book, private_key=None, transaction_type=1, book_type='book'):
 		if transaction_type in (1,2):
 			self.type = transaction_type
 		else:
@@ -41,7 +41,12 @@ class Transaction:
 			self.book = book.to_json() if self.type == 1 else None
 		else:
 			self.book = book
-		self.signature = Cryptog.get_signature(private_key, bytes(str(self.book), 'utf-8'))
+		if private_key and transaction_type == 1:
+			self.signature = Cryptog.get_signature(private_key, bytes(str(self.book), 'utf-8'))
+		elif transaction_type == 2:
+			self.signature = None
+		else:
+			raise ValueError("private key missing for this transaction type")
 
 
 	def to_json(self):

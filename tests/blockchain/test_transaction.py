@@ -40,7 +40,7 @@ class TestTransaction(unittest.TestCase):
 			'sender': 'mining',
 			'recipient': str(self.public_key),
 			'book': None,
-			'signature': str(self.transaction_2.signature)
+			'signature': 'None'
 		})
 
 if __name__ == '__main__':
