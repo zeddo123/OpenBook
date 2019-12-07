@@ -14,13 +14,13 @@ class TestBlock(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the json files necessary for the test
-		"""with open("tests/blockchain/test_files/json_block.json",'r') as f:
-			cls.jsons = ast.literal_eval(f.read())"""
+		with open("tests/blockchain/test_files/json_block.json",'r') as f:
+			cls.jsons = ast.literal_eval(f.read())
 
 		# getting the private and public keys for the test
-		with open("test_files/private_key.pem", 'rb') as f:
+		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
 			cls.private_key = f.read()
-		with open("test_files/public_key.pem", 'rb') as f:
+		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
 			cls.public_key = f.read()
 
 
@@ -42,7 +42,7 @@ class TestBlock(unittest.TestCase):
 		self.block_8 = Block(nonce = 258463)
 
 
-	"""def test_to_json(self):
+	def test_to_json(self):
 		# TODO: The first test seams to fail, because of a difference in the transactions
 		self.assertEqual(self.block_1.to_json(hash=True), self.jsons[0])
 		self.assertEqual(self.block_2.to_json(hash=True), self.jsons[1])
@@ -51,7 +51,7 @@ class TestBlock(unittest.TestCase):
 		self.assertEqual(self.block_5.to_json(hash=True), self.jsons[4])
 		self.assertEqual(self.block_6.to_json(hash=True), self.jsons[5])
 		self.assertEqual(self.block_7.to_json(hash=True), self.jsons[6])
-		self.assertEqual(self.block_8.to_json(hash=True), self.jsons[7])"""
+		self.assertEqual(self.block_8.to_json(hash=True), self.jsons[7])
 
 
 	def test_hash_block(self):
@@ -72,7 +72,7 @@ class TestBlock(unittest.TestCase):
 		self.assertEqual(self.block_8.hash_block(), 
 			'099773753a36cb773cb62f5990b6dd83d8212d07cbb01e10c2aae206cbe2e8f5')
 
-	"""def test_json_to_block(self):
+	def test_json_to_block(self):
 		block_3 = Block("49f68a5c8493ec2c0bf489821c21fc3b")
 
 		b_json = block_3.to_json()
@@ -81,7 +81,7 @@ class TestBlock(unittest.TestCase):
 		self.assertEqual(new_block,block_3)
 
 		#verify if the transactions are of a list type
-		self.assertEqual(type(new_block.transactions),list)"""
+		self.assertEqual(type(new_block.transactions),list)
 
 
 if __name__ == '__main__':
