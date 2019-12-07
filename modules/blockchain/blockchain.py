@@ -43,7 +43,9 @@ class BlockChain:
 
 		# Create the genesis block (the first block in the chain)
 		if not override:
-			genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+			with open("modules/blockchain/genesis_key.pem", 'rb') as f:
+				self.genesis_key = f.read()
+			genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, private_key=self.genesis_key, transaction_type=2)])
 			self.block_chain = [genesis_block]
 		else:
 			genesis_block = None
@@ -160,7 +162,7 @@ class BlockChain:
 		nonce = self.proof_of_work() # Determine the nonce value
 
 		# Create the reward and append it to the open transactions
-		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, transaction_type=2)
+		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, private_key=self.genesis_key, transaction_type=2)
 		self.open_transactions.append(reward_transaction)
 
 		# Create the new Block

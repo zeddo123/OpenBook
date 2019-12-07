@@ -9,17 +9,26 @@ from modules.blockchain.blockchain import BlockChain
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 from modules.blockchain.block import Block
+from modules.blockchain.cryptog import Cryptog
 
 
 class TestBlockchain(unittest.TestCase):
+
+	@classmethod
+	def setUpClass(cls):
+		# getting the private and public keys for the test
+		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
+			cls.private_key = f.read()
+		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
+			cls.public_key = f.read()
 
 	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
 	def setUp(self, mock_datetime, mock_hash_block):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
-		self.transaction_1 = Transaction("Joe", "recap", book_fortest)
-		self.transaction_2 = Transaction("mama", "meme", book_fortest, 2)
-		self.block_0 = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+		self.transaction_1 = Transaction(self.public_key, self.public_key, book_fortest, self.private_key)
+		self.transaction_2 = Transaction(self.public_key, self.public_key, book_fortest, self.private_key, 2)
+		self.block_0 = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, private_key=self.private_key, transaction_type=2)])
 		self.block_1 = Block('96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', [], index=1, nonce=208395)
 		self.block_2 = Block('96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', [], index=1, nonce=426969)
 		self.blockchain_0 = BlockChain()
@@ -28,14 +37,16 @@ class TestBlockchain(unittest.TestCase):
 
 
 	def test_to_json(self):
+		genesis_signature = Cryptog.get_signature(self.private_key, b'None')
+		
 		self.assertEqual(self.blockchain_0.to_json(), 
 			{0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': str(genesis_signature)}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[0].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}
 			})
 
@@ -45,18 +56,18 @@ class TestBlockchain(unittest.TestCase):
 			0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': str(genesis_signature)}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[0].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				},
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': str(genesis_signature)}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[1].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}
 			})
 
@@ -66,18 +77,18 @@ class TestBlockchain(unittest.TestCase):
 			0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': str(genesis_signature)}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[0].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}, 
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': str(genesis_signature)}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[1].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}, 
 			2: {
 				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
@@ -85,7 +96,7 @@ class TestBlockchain(unittest.TestCase):
 				'transactions': [], 
 				'nonce': 208395, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[2].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}, 
 			3: {
 				'previous_hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', 
@@ -93,7 +104,7 @@ class TestBlockchain(unittest.TestCase):
 				'transactions': [], 
 				'nonce': 426969, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
-				'hash': self.blockchain_0.block_chain[3].hash
+				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
 				}
 			})
 
@@ -107,7 +118,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
 		nonce = 34
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
-		nonce = 202
+		nonce = 426
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), True)
 
 		self.blockchain_2.open_transactions.append(self.transaction_2)
@@ -117,7 +128,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
 		nonce = 202
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
-		nonce = 34
+		nonce = 193
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), True)
 
 
@@ -146,12 +157,12 @@ class TestBlockchain(unittest.TestCase):
 
 		self.blockchain_1.open_transactions.append(self.transaction_1)
 		op_trans_1 = list(self.blockchain_1.open_transactions)
-		op_trans_1.append(Transaction(sender=None, recipient='zeddo', book=None, transaction_type=2))
+		op_trans_1.append(Transaction(sender=None, recipient='zeddo', book=None, private_key=self.private_key, transaction_type=2))
 		self.block_1.transactions = list(op_trans_1)
 
 		self.blockchain_2.open_transactions.append(self.transaction_2)
 		op_trans_2 = list(self.blockchain_2.open_transactions)
-		op_trans_2.append(Transaction(sender=None, recipient='maistro', book=None, transaction_type=2))
+		op_trans_2.append(Transaction(sender=None, recipient='maistro', book=None, private_key=self.private_key, transaction_type=2))
 		self.block_2.transactions = list(op_trans_2)
 
 		with patch("modules.blockchain.blockchain.BlockChain.proof_of_work", autospec=True) as mocked_nonce:
@@ -211,7 +222,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), True)
 		
 		# hash of block different for the calculated one 
-		block_1.transactions = [Transaction(sender=None, recipient='maistro', book=None, transaction_type=2)]
+		block_1.transactions = [Transaction(sender=None, recipient='maistro', book=None, private_key=self.private_key, transaction_type=2)]
 		self.assertEqual(BlockChain.verify_blockchain(self.blockchain_0), False)
 
 	def test_fork_chain(self):

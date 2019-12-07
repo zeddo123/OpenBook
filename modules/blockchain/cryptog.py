@@ -23,10 +23,10 @@ class Cryptog():
 		:type path: str
 		
 		:attr private_key: the private key.
-		:type private_key: :py:class:`PKey.
+		:type private_key: bytes.
 
 		:attr public_key: the public key.
-		:type public_key: :py:class:`PKey.
+		:type public_key: bytes.
 
 	:Methods:
 
@@ -168,7 +168,7 @@ class Cryptog():
 		Set the public key from buffer.
 
 		:param pkey: The public key.
-		:type pkey: :py:class:`PKey.
+		:type pkey: :py:class:`PKey / bytes.
 
 		:param byte: (optional) False means key is a PKey instance, 
 					True means key is byte.
@@ -229,8 +229,8 @@ class Cryptog():
 		Sign a byted data using given private key.
 		
 		:param private_key: private key
-		:type public_key: :py:class:`PKey
-
+		:type public_key: :py:class:`PKey / bytes.
+		d
 		:param data: data to be signed
 		:type data: bytes
 
@@ -261,7 +261,7 @@ class Cryptog():
 
 		:param public_key: the public key corresponding to the
         				private key which generated the signature
-        :type public_key: :py:class:`PKey
+        :type public_key: :py:class:`PKey / bytes.
 
         :param signature: signature returned by sign method
         :type signature: bytes
