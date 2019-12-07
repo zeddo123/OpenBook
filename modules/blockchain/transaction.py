@@ -1,4 +1,5 @@
 import hashlib
+from cryptog import *
 
 class Transaction:
 	"""the transaction object contains all the information about a transaction
@@ -29,24 +30,36 @@ class Transaction:
 		:meth to_json: returns a *dict* containing all the information
 
 	"""
-	def __init__(self, sender, recipient, book, transaction_type=1, book_type='book'):
-		self.type = transaction_type
+	def __init__(self, sender, recipient, book, private_key, transaction_type=1, book_type='book'):
+		if transaction_type in (1,2):
+			self.type = transaction_type
+		else:
+			raise ValueError("transaction_type argument take 1 or 2")
 		self.sender = sender if self.type == 1 else 'mining'
 		self.recipient = 'the-chain' if self.type == 1 else recipient
 		if book_type == 'book':
 			self.book = book.to_json() if self.type == 1 else None
 		else:
 			self.book = book
+		self.signature = get_signature(private_key)
 
 	
+	def get_signature(self, private_key):
+		data = bytes(str(self.book))
+		signature = Cryptog.get_signature(private_key, data)
+		return signature
+
+
 	def to_json(self):
 		json_dict = {
 			'type': self.type,
 			'sender': self.sender,
 			'recipient': self.recipient,
-			'book': self.book
+			'book': self.book,
+			'signature': self.signature
 		}
 		return json_dict
+
 
 	def __eq__(self, other):
 		return (self.to_json() == other.to_json())
@@ -56,6 +69,7 @@ class Transaction:
 
 	def __str__(self):
 		return str(self.to_json())
+
 
 	@staticmethod
 	def json_to_transaction(json_transaction):
@@ -71,5 +85,6 @@ class Transaction:
 		type_t = json_transaction['type']
 		recipient = json_transaction['recipient']
 		book = json_transaction['book']
+		signature = json_signature['signature']
 		
 		return Transaction(sender,recipient,book,type_t,book_type='json')

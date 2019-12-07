@@ -45,13 +45,12 @@ class Cryptog():
 	"""
 
 	def __init__(self, path='../../'):
-		"""Constructor of the class"""
 		self.path = path
 		self.private_key = None
 		self.public_key = None
 
 
-	def gendir(self):
+	def generate_dir(self):
 		"""
 		Generate a Crypto Directory.
 		"""
@@ -68,44 +67,72 @@ class Cryptog():
 			if not(os.path.isdir(self.path + 'crypto/signature')):	
 				os.mkdir(self.path + 'crypto/signature')
 
-
-	def load_privatekey(self, generate=False, save=False):
+	def generate_keys(self, save=False, filen=None):
 		"""
-		Load the private key or generate a pair private/public keys.
-
-		:param generate: (optional) False to lead the key from the specified path, 
-						True to generate new private/public key pair.
-		:type generate: Boolean.
+		Generate new Private and Public key pair.
+		(optional) save keys in a pem file
 
 		:param save: (optional) False to not save the new generated private/public key pair, 
-					True to save them.
-		:type save: Boolean.
+					True to save them
+		:type save: Boolean
+
+		:param filen: (optional) is the pem file name of the public key to load, 
+					if None load default public_key
+		:type filen: str
 
 		:return: None
 		"""
-		if not generate:
-			if os.path.isfile(self.path + 'crypto/.private/private_key.pem'):
-				with open(self.path + 'crypto/.private/private_key.pem', 'rb') as f:
-					private_key_data = f.read()
-			else:
-				raise CryptoKeyMissing('private key not found')
+		key = crypto.PKey()
+		key.generate_key(crypto.TYPE_RSA, 4096)
 
-		else:
-			key = crypto.PKey()
-			key.generate_key(crypto.TYPE_RSA, 4096)
+		private_key_data = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
+		public_key_data = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
 
-			private_key_data = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
-			public_key_data = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
-
-			if save:
+		if save:
+			if not filen:
 				with open(self.path + 'crypto/.private/private_key.pem', 'wb') as f:
 					f.write(private_key_data)
-
 				with open(self.path + 'crypto/public/public_key.pem', 'wb') as f:
+					f.write(public_key_data)
+
+			else:
+				with open(self.path + 'crypto/.private/'+filen+'prv.pem', 'wb') as f:
+					f.write(private_key_data)
+
+				with open(self.path + 'crypto/public/'+filen+'pub.pem', 'wb') as f:
 					f.write(public_key_data)
 
 		self.private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key_data)
 		self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
+
+
+	def load_privatekey(self, filen=None):
+		"""
+		Load the private key or generate a pair private/public keys.
+
+		:param filen: (optional) is the pem file name of the public key to load, 
+					if None load default public_key
+		:type filen: str
+
+		:return: None
+		"""
+		if not filen:
+			if os.path.isfile(self.path + 'crypto/.private/private_key.pem'):
+				with open(self.path + 'crypto/.private/private_key.pem', 'rb') as f:
+					private_key_data = f.read()
+
+			else:
+				raise CryptoKeyMissing('private key not found')
+
+		else:
+			if os.path.isfile(self.path + 'crypto/.private/'+filen+'prv.pem'):
+				with open(self.path + 'crypto/.private/'+filen+'prv.pem', 'rb') as f:
+					private_key_data = f.read()
+
+			else:
+				raise CryptoKeyMissing('private key not found')
+
+		self.private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key_data)
 
 
 	def load_publickey(self, filen=None):
@@ -113,26 +140,28 @@ class Cryptog():
 		Load the public key from the specified path.
 
 		:param filen: (optional) is the pem file name of the public key to load, 
-					if None load default public_key.
-		:type filen: str.
+					if None load default public_key
+		:type filen: str
 
-		:return: None.
+		:return: None
 		"""
 		if not filen:
 			if os.path.isfile(self.path + 'crypto/public/public_key.pem'):
 				with open(self.path + 'crypto/public/public_key.pem', 'rb') as f:
 					public_key_data = f.read()
-					self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
+
 			else:
 				raise CryptoKeyMissing('own public key not found')
 
 		else:
-			if os.path.isfile(self.path + 'crypto/public/'+filen+'.pem'):
-				with open(self.path + 'crypto/public/'+filen+'.pem', 'rb') as f:
+			if os.path.isfile(self.path + 'crypto/public/'+filen+'pub.pem'):
+				with open(self.path + 'crypto/public/'+filen+'pub.pem', 'rb') as f:
 					public_key_data = f.read()
-					self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
+					
 			else:
 				raise CryptoKeyMissing('public key not found')
+
+		self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
 
 
 	def set_publickey(self, pkey, byte=False):
@@ -166,9 +195,10 @@ class Cryptog():
 			raise TypeError('byte must be Boolean')
 
 
-	def sign(self, data, save=False):
+	def sign(self, data, save=False, filen=None):
 		"""
 		Sign a byted data using self private key.
+		(optional) save signature in a pem file.
 
 		:param data: data to be signed
 		:type data: bytes
@@ -177,17 +207,42 @@ class Cryptog():
 					False to not save it
 		:type save: boolean
 
+		:param filen: (optional) is the pem file name of the public key to load, 
+					if None load default public_key.
+		:type filen: str
+
 		:return: signature
 		:rtype: bytes
 		"""
 		signature = crypto.sign(self.private_key, data, 'sha256')
 
 		if save:
-			with open(self.path + 'crypto/signature/signature.pem', 'wb') as f:
-				f.write(signature)
+			if not filen:
+				with open(self.path + 'crypto/signature/signature.pem', 'wb') as f:
+					f.write(signature)
+
+			else:
+				with open(self.path + 'crypto/signature/'+filen+'sig.pem', 'wb') as f:
+					f.write(signature)
 
 		return signature
 
+	@staticmethod
+	def get_signature(private_key, data):
+		"""
+		Sign a byted data using given private key.
+		
+		:param private_key: private key
+		:type public_key: :py:class:`PKey
+
+		:param data: data to be signed
+		:type data: bytes
+
+		:return: signature
+		:rtype: bytes
+		"""
+		signature = crypto.sign(private_key, data, 'sha256')
+		return signature
 	
 	@staticmethod
 	def verify_signature(public_key, signature, data):
