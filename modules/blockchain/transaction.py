@@ -1,5 +1,5 @@
 import hashlib
-from cryptog import *
+from modules.blockchain.cryptog import *
 
 class Transaction:
 	"""the transaction object contains all the information about a transaction
@@ -41,13 +41,7 @@ class Transaction:
 			self.book = book.to_json() if self.type == 1 else None
 		else:
 			self.book = book
-		self.signature = get_signature(private_key)
-
-	
-	def get_signature(self, private_key):
-		data = bytes(str(self.book))
-		signature = Cryptog.get_signature(private_key, data)
-		return signature
+		self.signature = Cryptog.get_signature(private_key, bytes(str(self.book), 'utf-8'))
 
 
 	def to_json(self):
