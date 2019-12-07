@@ -12,9 +12,9 @@ class TestTransaction(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the private and public keys for the test
-		with open("test_files/private_key.pem", 'rb') as f:
+		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
 			cls.private_key = f.read()
-		with open("test_files/public_key.pem", 'rb') as f:
+		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
 			cls.public_key = f.read()
 
 	def setUp(self):
@@ -25,7 +25,7 @@ class TestTransaction(unittest.TestCase):
 	def test_to_json(self):
 		self.assertEqual(self.transaction_1.to_json(), {
 			'type': 1, 
-			'sender': self.public_key, 
+			'sender': str(self.public_key), 
 			'recipient': 'the-chain', 
 			'book': {
 				'title': "Le Gène égoïste", 
@@ -33,14 +33,14 @@ class TestTransaction(unittest.TestCase):
 				'date': "1976", 
 				'genre': "Non-fiction"
 			},
-			'signature': self.transaction_1.signature
+			'signature': str(self.transaction_1.signature)
 		})
 		self.assertEqual(self.transaction_2.to_json(), {
 			'type': 2,
 			'sender': 'mining',
-			'recipient': self.public_key,
+			'recipient': str(self.public_key),
 			'book': None,
-			'signature': self.transaction_2.signature
+			'signature': str(self.transaction_2.signature)
 		})
 
 if __name__ == '__main__':
