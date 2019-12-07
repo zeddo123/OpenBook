@@ -47,10 +47,10 @@ class Transaction:
 	def to_json(self):
 		json_dict = {
 			'type': self.type,
-			'sender': self.sender,
-			'recipient': self.recipient,
+			'sender': str(self.sender),
+			'recipient': str(self.recipient),
 			'book': self.book,
-			'signature': self.signature
+			'signature': str(self.signature)
 		}
 		return json_dict
 

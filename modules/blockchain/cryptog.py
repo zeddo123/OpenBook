@@ -67,6 +67,7 @@ class Cryptog():
 			if not(os.path.isdir(self.path + 'crypto/signature')):	
 				os.mkdir(self.path + 'crypto/signature')
 
+
 	def generate_keys(self, save=False, filen=None):
 		"""
 		Generate new Private and Public key pair.
@@ -85,25 +86,23 @@ class Cryptog():
 		key = crypto.PKey()
 		key.generate_key(crypto.TYPE_RSA, 4096)
 
-		private_key_data = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
-		public_key_data = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
+		self.private_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, key)
+		self.public_key = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
 
 		if save:
 			if not filen:
 				with open(self.path + 'crypto/.private/private_key.pem', 'wb') as f:
-					f.write(private_key_data)
+					f.write(self.private_key)
+
 				with open(self.path + 'crypto/public/public_key.pem', 'wb') as f:
-					f.write(public_key_data)
+					f.write(self.public_key)
 
 			else:
 				with open(self.path + 'crypto/.private/'+filen+'prv.pem', 'wb') as f:
-					f.write(private_key_data)
+					f.write(self.private_key)
 
 				with open(self.path + 'crypto/public/'+filen+'pub.pem', 'wb') as f:
-					f.write(public_key_data)
-
-		self.private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key_data)
-		self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
+					f.write(self.public_key)
 
 
 	def load_privatekey(self, filen=None):
@@ -132,7 +131,7 @@ class Cryptog():
 			else:
 				raise CryptoKeyMissing('private key not found')
 
-		self.private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key_data)
+		self.private_key = private_key_data
 
 
 	def load_publickey(self, filen=None):
@@ -161,7 +160,7 @@ class Cryptog():
 			else:
 				raise CryptoKeyMissing('public key not found')
 
-		self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key_data)
+		self.public_key = public_key_data
 
 
 	def set_publickey(self, pkey, byte=False):
@@ -177,22 +176,17 @@ class Cryptog():
 
 		:return: None
 		"""
-		if byte:
-			try:
-				self.public_key = crypto.load_publickey(crypto.FILETYPE_PEM, pkey)
-
-			except OpenSSL.crypto.Error:
-				raise CryptoError('Invalid byte key')
-
-		elif not byte:
+		if byte == False:
 			if not isinstance(pkey, crypto.PKey):
 				raise TypeError("pkey must be a PKey instance")
 
 			else:
-				self.public_key = pkey
+				pkey = crypto.dump_publickey(crypto.FILETYPE_PEM, pkey)
 
-		else:
+		elif byte != True:
 			raise TypeError('byte must be Boolean')
+
+		self.public_key = pkey #TODO: Add verification for byted key
 
 
 	def sign(self, data, save=False, filen=None):
@@ -214,7 +208,8 @@ class Cryptog():
 		:return: signature
 		:rtype: bytes
 		"""
-		signature = crypto.sign(self.private_key, data, 'sha256')
+		private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, self.private_key)
+		signature = crypto.sign(private_key, data, 'sha256')
 
 		if save:
 			if not filen:
@@ -227,8 +222,9 @@ class Cryptog():
 
 		return signature
 
+
 	@staticmethod
-	def get_signature(private_key, data):
+	def get_signature(private_key, data, byte=False):
 		"""
 		Sign a byted data using given private key.
 		
@@ -238,14 +234,28 @@ class Cryptog():
 		:param data: data to be signed
 		:type data: bytes
 
+		:param byte: (optional) False means key is a PKey instance, 
+					True means key is byte.
+		:type byte: boolean
+
 		:return: signature
 		:rtype: bytes
 		"""
+		if byte == False:
+			private_key = crypto.load_privatekey(crypto.FILETYPE_PEM, private_key)
+
+		elif byte != True:
+			raise TypeError('byte must be Boolean')
+
+		if not isinstance(private_key, crypto.PKey):
+			raise TypeError("pkey must be a PKey instance")
+
 		signature = crypto.sign(private_key, data, 'sha256')
 		return signature
 	
+
 	@staticmethod
-	def verify_signature(public_key, signature, data):
+	def verify_signature(public_key, signature, data, byte=False):
 		"""
 		Verify the signature for a data bytes.
 
@@ -259,18 +269,32 @@ class Cryptog():
         :param data: data to be verified
         :type data: bytes
 
+        :param byte: (optional) False means key is a PKey instance, 
+					True means key is byte.
+		:type byte: boolean
+
         :return: ''True'' if signature is valid, ''False'' otherwise
         :rtype: boolean
 		"""
-		x509 = crypto.X509()
-		x509.set_pubkey(public_key)
-		try:
-			if not(crypto.verify(x509, signature, data, 'sha256')):
-				return True
-			else:
+		if byte == False:
+			public_key = crypto.load_publickey(crypto.FILETYPE_PEM, public_key)
+
+		elif byte != True:
+			raise TypeError('byte must be Boolean')
+
+		if not isinstance(public_key, crypto.PKey):
+			raise TypeError("pkey must be a PKey instance")
+
+		else:
+			x509 = crypto.X509()
+			x509.set_pubkey(public_key)
+			try:
+				if not(crypto.verify(x509, signature, data, 'sha256')):
+					return True
+				else:
+					return False
+			except:
 				return False
-		except:
-			return False
 
 
 

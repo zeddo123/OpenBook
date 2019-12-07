@@ -9,20 +9,23 @@ from modules.blockchain.cryptog import Cryptog
 
 class TestTransaction(unittest.TestCase):
 
-	def setUp(self):
-		self.crp_1 = Cryptog()
-		self.crp_2 = Cryptog()
-		self.crp_1.generate_keys()
-		self.crp_2.generate_keys()
+	@classmethod
+	def setUpClass(cls):
+		# getting the private and public keys for the test
+		with open("test_files/private_key.pem", 'rb') as f:
+			cls.private_key = f.read()
+		with open("test_files/public_key.pem", 'rb') as f:
+			cls.public_key = f.read()
 
+	def setUp(self):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
-		self.transaction_1 = Transaction(self.crp_1.public_key, self.crp_2.public_key, book_fortest, self.crp_1.private_key)
-		self.transaction_2 = Transaction(self.crp_2.public_key, self.crp_1.public_key, book_fortest, self.crp_2.private_key, 2)
+		self.transaction_1 = Transaction(self.public_key, self.public_key, book_fortest, self.private_key)
+		self.transaction_2 = Transaction(self.public_key, self.public_key, book_fortest, self.private_key, 2)
 
 	def test_to_json(self):
 		self.assertEqual(self.transaction_1.to_json(), {
 			'type': 1, 
-			'sender': self.crp_1.public_key, 
+			'sender': self.public_key, 
 			'recipient': 'the-chain', 
 			'book': {
 				'title': "Le Gène égoïste", 
@@ -35,7 +38,7 @@ class TestTransaction(unittest.TestCase):
 		self.assertEqual(self.transaction_2.to_json(), {
 			'type': 2,
 			'sender': 'mining',
-			'recipient': self.crp_1.public_key,
+			'recipient': self.public_key,
 			'book': None,
 			'signature': self.transaction_2.signature
 		})
