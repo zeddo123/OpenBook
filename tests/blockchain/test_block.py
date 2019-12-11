@@ -43,7 +43,6 @@ class TestBlock(unittest.TestCase):
 
 
 	def test_to_json(self):
-		# TODO: The first test seams to fail, because of a difference in the transactions
 		self.assertEqual(self.block_1.to_json(hash=True), self.jsons[0])
 		print(self.block_2.to_json())
 		self.assertEqual(self.block_2.to_json(hash=True), self.jsons[1])
