@@ -35,12 +35,15 @@ class Transaction:
 			self.type = transaction_type
 		else:
 			raise ValueError("transaction_type argument take 1 or 2")
+
 		self.sender = sender if self.type == 1 else 'mining'
 		self.recipient = 'the-chain' if self.type == 1 else recipient
+		
 		if book_type == 'book':
 			self.book = book.to_json() if self.type == 1 else None
 		else:
 			self.book = book
+		
 		if private_key and transaction_type == 1:
 			self.signature = Cryptog.get_signature(private_key, bytes(str(self.book), 'utf-8'))
 		elif transaction_type == 2:
