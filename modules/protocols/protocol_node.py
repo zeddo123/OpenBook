@@ -125,15 +125,20 @@ class P2Protocol(ClientProtocol):
 			
 			elif info_type == 'get_blockchain':
 				self.send_blockchain()
+				self.factory.dispatch_get_blockchain(self)
+
 			elif info_type == 'post_blockchain':
-				self.handel_post_blockchain()
+				adopted = self.handel_post_blockchain()
+				# Nodes will only dispatch blockchain that are verified
+				if adopted[0] == True:
+					self.factory.dispatch_blockchain(self,adopted[1])
 			
 			elif info_type == 'get_transaction':
 				pass
 			elif info_type == 'post_transaction':
 				self.handel_transaction(line)
 
-		self._debug('__________________________________________\n\n\n\n')
+		self._debug(42*'^' + '\n\n\n\n')
 
 	# Handling Initialisation
 	def handel_pong(self, pong):
@@ -237,15 +242,20 @@ class P2Protocol(ClientProtocol):
 		self._debug(f'Send get_blockchain request {self.remote_nodeid}')
 		self.transport.write((block_json + '\n').encode())
 
-	def send_blockchain(self):
+	def send_blockchain(self, bc=None):
 		"""sends the local chain to the connected node
 
 		:var serial_block: contains the local blockchain and information_type tag next to it
 		:serial_block: json
 		"""
+		if bc is None:
+			blockchain = self.factory.blockchain.to_json()
+		else:
+			blockchain = bc.to_json()
+
 		serial_block = json.dumps({
 									'information_type': 'post_blockchain',
-									'blockchain': self.factory.blockchain.to_json()
+									'blockchain': blockchain
 								})
 		self.transport.write(serial_block)
 
@@ -257,13 +267,20 @@ class P2Protocol(ClientProtocol):
 		:param blockchain: the new chain
 		:type blockchain: json/dict
 
+		:returns: result if the blockchain received is verified and the blockchain object
+		:return type: tuple of either (bool,BlockChain)-if verified or (bool, None) otherwise
 		"""
 		blockchain = json.loads(blockchain)['blockchain']
-		if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
-			self.factory = blockchain
-			self._debug('-> Updating Local Blockchain')
+		if BlockChain.verify_blockchain(blockchain):
+			if blockchain.number_blocks() > self.factory.blockchain.number_blocks():
+				self._debug('-> Updating Local Blockchain')
+				self.factory.blockchain = blockchain
+			else:
+				self._debug('-> Updating Local Blockchain -> Local Blockchain longer')
+			
+			return (True, blockchain)
 		else:
-			self._debug('-> Updating Local Blockchain -> Local Blockchain longer')
+			return (False, None)
 
 
 	# Sending/Posting/Handling the transactions

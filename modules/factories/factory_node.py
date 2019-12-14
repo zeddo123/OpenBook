@@ -27,6 +27,9 @@ class P2PFactory(Factory):
 	
 	def __init__(self, port, max_peers=0, debug=True):
 		self.blockchain = BlockChain()
+		# blockchain buffer will contain a temporary list of blockchains 
+		self._blockchain_buffer = []
+		
 		# debug variable if True prints log
 		self.debug = debug
 
@@ -57,7 +60,16 @@ class P2PFactory(Factory):
 		# Send Request to get new_peers from seed server
 		self.seed_connection.addCallback(lambda p : p.send_handshake())
 
+	def dispatch_get_blockchain(self, protocol):
+		# Send a get_blockchain request except for the node who started the feed-back
+		for id,p in know_peers.items():
+			if p != protocol:
+				p.send_get_blockchain()
 
+	def dispatch_blockchain(self, protocol, bc):
+		for id,p in know_peers.items():
+			if p != protocol:
+				p.send_blockchain(bc)
 
 	def buildProtocol(self, addr):
 		return P2Protocol(self)
