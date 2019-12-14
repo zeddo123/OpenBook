@@ -244,7 +244,7 @@ if __name__ == '__main__':
 	blockchain = BlockChain()
 	print(blockchain)
 	blockchain.create_append_transaction(Transaction('mouha', 'recipient',
-													 Book(title='The Selfish Gene', author='Richard Dawkins',
-														  date='19--', genre='Science')))
+													Book(title='The Selfish Gene', author='Richard Dawkins',
+														date='19--', genre='Science')))
 	blockchain.mine_block('zeddo')
 	print(blockchain)
