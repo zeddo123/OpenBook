@@ -11,7 +11,7 @@
 	"transactions": [
 		{
 			"type": 1, 
-			"sender": "not-mining", 
+			"sender": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
 			"recipient": "the-chain",
 			"book": {
 				"title": "Le Gène égoïste",
@@ -19,12 +19,12 @@
 				"date": "1976",
 				"genre": "Non-fiction"
 			},	
-			"signature": "signature here"
+			"signature": "0x24df3c32198b90c1d1865e27f4cf27d8f5c877cf73bceaf1be7aa50488bf2bb5,0xd3dfe2d05d3e1375f0c02b44b235238e9827d5f6ce522c75f4c5bef970de4edc"
 		},
 		{	
 			"type": 2, 
 			"sender": "mining", 
-			"recipient": "not-data-base", 
+			"recipient": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
 			"book": None, 
 			"signature": None
 		}
@@ -38,20 +38,22 @@
 	"transactions": [
 		{
 			"type": 1, 
-			"sender": "not-mining", 
+			"sender": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
 			"recipient": "the-chain", 
 			"book": {
 				"title": "Le Gène égoïste", 
 				"author": "Richard Dawkins", 
 				"date": "1976", 
 				"genre": "Non-fiction"
-			}
+			},
+			"signature": "0x24df3c32198b90c1d1865e27f4cf27d8f5c877cf73bceaf1be7aa50488bf2bb5,0xd3dfe2d05d3e1375f0c02b44b235238e9827d5f6ce522c75f4c5bef970de4edc"
 		}, 
 		{
 			"type": 2, 
 			"sender": "mining", 
-			"recipient": "not-data-base", 
-			"book": None
+			"recipient": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
+			"book": None,
+			"signature": None
 		}
 	],
 	"nonce": 208393,
@@ -63,20 +65,22 @@
 	"transactions": [
 		{
 			"type": 1, 
-			"sender": "not-mining", 
+			"sender": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
 			"recipient": "the-chain", 
 			"book": {
 				"title": "Le Gène égoïste", 
 				"author": "Richard Dawkins", 
 				"date": "1976", 
 				"genre": "Non-fiction"
-			}
+			},
+			"signature": "0x24df3c32198b90c1d1865e27f4cf27d8f5c877cf73bceaf1be7aa50488bf2bb5,0xd3dfe2d05d3e1375f0c02b44b235238e9827d5f6ce522c75f4c5bef970de4edc"
 		}, 
 		{
 			"type": 2, 
 			"sender": "mining", 
-			"recipient": "not-data-base", 
-			"book": None
+			"recipient": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
+			"book": None,
+			"signature": None
 		}
 	],
 	"nonce": 208393,
@@ -95,22 +99,24 @@
 	"transactions": [
 		{
 			"type": 1, 
-			"sender": "not-mining", 
-			"recipient": 
-			"the-chain", 
+			"sender": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
+			"recipient": "the-chain", 
 			"book": {
 				"title": "Le Gène égoïste", 
 				"author": "Richard Dawkins", 
 				"date": "1976", 
 				"genre": "Non-fiction"
-			}
+			},
+			"signature": "0x24df3c32198b90c1d1865e27f4cf27d8f5c877cf73bceaf1be7aa50488bf2bb5,0xd3dfe2d05d3e1375f0c02b44b235238e9827d5f6ce522c75f4c5bef970de4edc"
 		}, 
 		{
 			"type": 2, 
 			"sender": "mining", 
-			"recipient": "not-data-base", 
-			"book": None}
-		],
+			"recipient": "0xc53a51a0cc09a430f3ca7314dfb946509df0a7db4c8251c15945a3806fb28bde,0xbe440ed7f72fcf52485dfa8718378c574610ad48b9a47cc0392367e8935453a7", 
+			"book": None,
+			"signature": None
+		}
+	],
 	"nonce": 208393,
 	"Timestamp": "2019-10-16 19:49:28.800945"
 },

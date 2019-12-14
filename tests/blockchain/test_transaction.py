@@ -4,6 +4,7 @@ sys.path.append('../../')
 import unittest
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
+from modules.blockchain.cryp import Cryp
 from fastecdsa.keys import import_key
 from fastecdsa.curve import secp256k1
 
@@ -23,7 +24,7 @@ class TestTransaction(unittest.TestCase):
 	def test_to_json(self):
 		self.assertEqual(self.transaction_1.to_json(), {
 			'type': 1, 
-			'sender': str(self.public_key), 
+			'sender': Cryp.dump_pub(self.public_key), 
 			'recipient': 'the-chain', 
 			'book': {
 				'title': "Le Gène égoïste", 
@@ -31,14 +32,14 @@ class TestTransaction(unittest.TestCase):
 				'date': "1976", 
 				'genre': "Non-fiction"
 			},
-			'signature': str(self.transaction_1.signature)
+			'signature': self.transaction_1.signature
 		})
 		self.assertEqual(self.transaction_2.to_json(), {
 			'type': 2,
 			'sender': 'mining',
-			'recipient': str(self.public_key),
+			'recipient': Cryp.dump_pub(self.public_key),
 			'book': None,
-			'signature': 'None'
+			'signature': None
 		})
 
 if __name__ == '__main__':

@@ -40,7 +40,7 @@ class TestBlockchain(unittest.TestCase):
 			{0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': 'None'}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': None}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
 				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
@@ -53,7 +53,7 @@ class TestBlockchain(unittest.TestCase):
 			0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': 'None'}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': None}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
 				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
@@ -61,7 +61,7 @@ class TestBlockchain(unittest.TestCase):
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': 'None'}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': None}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
 				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
@@ -74,7 +74,7 @@ class TestBlockchain(unittest.TestCase):
 			0: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': 'None'}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': None}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
 				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
@@ -82,7 +82,7 @@ class TestBlockchain(unittest.TestCase):
 			1: {
 				'previous_hash': None, 
 				'index': 0, 
-				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': 'None'}], 
+				'transactions': [{'type': 2, 'sender': 'mining', 'recipient': 'BlockChain', 'book': None, 'signature': None}], 
 				'nonce': 208393, 
 				'Timestamp': '2019-10-16 19:49:28.800945',
 				'hash': '96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e'
@@ -115,7 +115,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
 		nonce = 34
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
-		nonce = 494
+		nonce = 204
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), True)
 
 		self.blockchain_2.open_transactions.append(self.transaction_2)
@@ -125,7 +125,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
 		nonce = 202
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
-		nonce = 247
+		nonce = 6
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), True)
 
 

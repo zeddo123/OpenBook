@@ -124,15 +124,15 @@ class TestBlock(unittest.TestCase):
 		self.assertEqual(self.block_1.hash_block(),
 						'02d72389b7366e51a4270cda1060554c9bde10538ae38c65d9b2f00e2a08b1f6')
 		self.assertEqual(self.block_2.hash_block(),
-						'422958ad5960ec69934c640204e0bc9a6f20aeae20cef040a617741d4719d013')
+						'9c5c13f5f5649f9056b4f6c82fa0b64759a50c05a581389db17201832bf6db4e')
 		self.assertEqual(self.block_3.hash_block(),
-						'9a1480c3480b6d88469aec89618a453da6bb31b8ba1cce2d9718638f2aadde47')
+						'4dd090f8c5ab15a626f3db2d23461988a10b9cdf3d96e71b4cc9510111bd4221')
 		self.assertEqual(self.block_4.hash_block(),
-						'f06c5d99239dead346ad0dfc52aa881353ed6571ce203feece3437eb22904488')
+						'9109f2750130e7e5fafc19f12f57cfa07852e392e566e4f2e17d1e0ce2de7295')
 		self.assertEqual(self.block_5.hash_block(),
 						'6bd746967f61871e934983f806bb1a24932b094fa2e2bd6dd05f4bbafdb20346')
 		self.assertEqual(self.block_6.hash_block(),
-						'99a085ab962ddc5e3e72dd7efb589a1e30f17d987a94b08f22f797a41dc3d8e8')
+						'30199907b1885b8569a981f2361301f0eb0686b469f279121621012c6195d21a')
 		self.assertEqual(self.block_7.hash_block(),
 						'f5765a40ef87969bcec557812b8392746b5f77203a3ad1d7d639aa4d39724fa7')
 		self.assertEqual(self.block_8.hash_block(),
