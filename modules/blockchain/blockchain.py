@@ -1,11 +1,12 @@
-import hashlib
 import copy as cp
-
-from modules.blockchain.block import *
-from modules.blockchain.transaction import *
-from modules.blockchain.book import *
+from pprint import pprint as pp
 
 from termcolor import colored
+
+from modules.blockchain.block import *
+from modules.blockchain.book import *
+from modules.blockchain.transaction import *
+
 
 class BlockChain:
 	"""BlockChain Object to be added to the chain
@@ -43,18 +44,17 @@ class BlockChain:
 
 		# Create the genesis block (the first block in the chain)
 		if not override:
-			genesis_block = Block(None,[Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
+			genesis_block = Block(None,
+								  [Transaction(sender=None, recipient='BlockChain', book=None, transaction_type=2)])
 			self.block_chain = [genesis_block]
 		else:
 			genesis_block = None
 			self.block_chain = []
 
-		
 		# a list containing all the forks of a chain at the same level
 		self.chains_same_level = [self.block_chain]
 		self.open_transactions = []
 		self.debug = debug
-
 
 	def valid_proof(self, last_hash, nonce):
 		"""Verify the hash guess
@@ -74,10 +74,9 @@ class BlockChain:
 
 		guess_hash = hashlib.sha256(guess).hexdigest()
 
-		#print(guess_hash)
+		# print(guess_hash)
 
-		return guess_hash[0:2] == '42' # 42 is the difficulty to find the hash
-
+		return guess_hash[0:2] == '42'  # 42 is the difficulty to find the hash
 
 	def proof_of_work(self):
 		"""Search for the right hash by adjusting the `nonce` value
@@ -98,7 +97,7 @@ class BlockChain:
 			nonce += 1
 
 		return nonce
-	
+
 	# TODO: change the name of this method
 	def create_append_transaction(self, new_transaction):
 		"""This method create a transaction and append it to the Open transaction attr
@@ -111,7 +110,7 @@ class BlockChain:
 		if self.verify_transaction(new_transaction):
 			self.open_transactions.append(new_transaction)
 
-	def verify_transaction(self, new_transaction): #TODO: complete this method
+	def verify_transaction(self, new_transaction):  # TODO: complete this method
 		pass
 
 	@staticmethod
@@ -130,7 +129,7 @@ class BlockChain:
 			block_chain = blockchain
 		flags = []
 
-		for i in range(1,len(block_chain)):
+		for i in range(1, len(block_chain)):
 			block = block_chain[i]
 			block1 = block_chain[i - 1]
 
@@ -154,17 +153,17 @@ class BlockChain:
 
 		:returns: None
 		"""
-		last_block = self.block_chain[-1] # Get the Last block
-		last_hash = last_block.hash # Get the hash of the last block
+		last_block = self.block_chain[-1]  # Get the Last block
+		last_hash = last_block.hash  # Get the hash of the last block
 
-		nonce = self.proof_of_work() # Determine the nonce value
+		nonce = self.proof_of_work()  # Determine the nonce value
 
 		# Create the reward and append it to the open transactions
 		reward_transaction = Transaction(sender=None, recipient=recipient, book=None, transaction_type=2)
 		self.open_transactions.append(reward_transaction)
 
 		# Create the new Block
-		new_block = Block(last_hash,self.open_transactions,index=len(self.block_chain),nonce=nonce)
+		new_block = Block(last_hash, self.open_transactions, index=len(self.block_chain), nonce=nonce)
 
 		self.block_chain.append(new_block)
 
@@ -197,7 +196,7 @@ class BlockChain:
 		# Loop through and convert the block to json objects
 		for i, block in enumerate(self.block_chain):
 			dict_json[i] = block.to_json()
-		
+
 		return dict_json
 
 	# Returs number of block in the chain
@@ -212,10 +211,10 @@ class BlockChain:
 	def __str__(self):
 		print(f'::{self.number_blocks()} blocks in the blockchain')
 		for block, number in zip(self.block_chain, range(len(self.block_chain))):
-			print('number\n',number)
+			print('number\n', number)
 			print('block\n', block)
 		return ''
-	
+
 	@staticmethod
 	def json_to_blockchain(bc_json):
 		bc = BlockChain(override=True)
@@ -223,7 +222,6 @@ class BlockChain:
 			bc.block_chain.append(Block.json_to_block(block))
 
 		return bc
-
 
 	def _debug(self, msg, pprint=False):
 		"""Prints helpful information in debug mode
@@ -236,14 +234,17 @@ class BlockChain:
 		"""
 		if self.debug:
 			if not pprint:
-				print(colored(msg,'magenta'))
+				print(colored(msg, 'magenta'))
 			else:
 				pp(msg, indent=4, width=4)
 
+
 if __name__ == '__main__':
-	#Exemple on how to use the blockchain object
+	# Exemple on how to use the blockchain object
 	blockchain = BlockChain()
 	print(blockchain)
-	blockchain.create_append_transaction(Transaction('mouha','recipient',Book(title='The Selfish Gene',author='Richard Dawkins', date='19--', genre='Science')))
+	blockchain.create_append_transaction(Transaction('mouha', 'recipient',
+													Book(title='The Selfish Gene', author='Richard Dawkins',
+														date='19--', genre='Science')))
 	blockchain.mine_block('zeddo')
 	print(blockchain)
