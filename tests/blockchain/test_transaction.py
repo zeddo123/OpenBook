@@ -5,6 +5,7 @@ import unittest
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 from fastecdsa.keys import import_key
+from fastecdsa.curve import secp256k1
 
 
 class TestTransaction(unittest.TestCase):
@@ -12,7 +13,7 @@ class TestTransaction(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the private and public keys for the test
-		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem')
+		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem', curve=secp256k1)
 
 	def setUp(self):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")

@@ -10,6 +10,7 @@ from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 from modules.blockchain.block import Block
 from fastecdsa.keys import import_key
+from fastecdsa.curve import secp256k1
 
 
 
@@ -18,7 +19,7 @@ class TestBlockchain(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the private and public keys for the test
-		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem')
+		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem', curve=secp256k1)
 
 	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
