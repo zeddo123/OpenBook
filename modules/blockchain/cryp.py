@@ -1,5 +1,6 @@
 import os
 from fastecdsa.curve import secp256k1
+from fastecdsa.point import Point
 from fastecdsa import keys, ecdsa
 
 
@@ -36,7 +37,13 @@ class Cryp():
 
 		:meth sign: Sign data using self private key.
 
+		:meth get_signature: Sign data using self private key.
+
 		:meth verify_signature: (staticmethod) Verify the signature of a data.
+
+		:meth dump_pub: (staticmethod) Convert public key to str for json file.
+
+		:meth load_pub: (staticmethod) Convert str key to public key from json file.
 
 	"""
 
@@ -163,13 +170,14 @@ class Cryp():
 		:type data: str
 
 		:return: signature
-		:rtype: tuple
+		:rtype: str
 		"""
 		if self.private_key:
-			signature = ecdsa.sign(data, self.private_key, curve=secp256k1)
+			r, s = ecdsa.sign(data, self.private_key, curve=secp256k1)
 		else:
 			raise TypeError("no private key to sign with")
 
+		signature = hex(r) + "," + hex(s)
 		return signature
 
 	@staticmethod
@@ -186,7 +194,9 @@ class Cryp():
 		:return: signature
 		:rtype: tuple
 		"""
-		return ecdsa.sign(data, key, curve=secp256k1)
+		r, s = ecdsa.sign(data, key, curve=secp256k1)
+		signature = hex(r) + "," + hex(s)
+		return signature
 
 	@staticmethod
 	def verify_signature(public_key, signature, data):
@@ -206,7 +216,37 @@ class Cryp():
 		:return: ''True'' if signature is valid, ''False'' otherwise
 		:rtype: boolean
 		"""
+		signature = tuple(map(lambda sig: int(sig, 0), signature.split(',')))
 		return ecdsa.verify(signature, data, public_key, curve=secp256k1)
+
+	@staticmethod
+	def dump_pub(public_key):
+		"""
+		Convert public key to str for json file.
+
+		:param public_key: The public key to convert
+		:type public_key: Point
+
+		:return: str(public_key)
+		:rtype: str
+		"""
+		pub = hex(public_key.x) + "," + hex(public_key.y)
+		return pub
+
+	@staticmethod
+	def load_pub(str_key):
+		"""
+		Convert str key to public key from json file.
+
+		:param public_key: str key to convert
+		:type public_key: str
+
+		:return: Public key
+		:rtype: Point
+		"""
+		x, y = tuple(map(lambda sig: int(sig, 0), str_key.split(',')))
+		public_key = Point(x, y, secp256k1)
+		return public_key
 
 
 if __name__ == '__main__':

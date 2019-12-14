@@ -44,10 +44,10 @@ class Transaction:
 		else:
 			self.book = book
 		
-		if private_key and transaction_type == 1:
-			self.signature = Cryp.get_signature(str(self.book), private_key)
-		elif transaction_type == 2:
+		if transaction_type == 2:
 			self.signature = None
+		elif private_key:
+			self.signature = Cryp.get_signature(str(self.book), private_key)
 		else:
 			raise ValueError("private key missing for this transaction type")
 
@@ -55,10 +55,10 @@ class Transaction:
 	def to_json(self):
 		json_dict = {
 			'type': self.type,
-			'sender': str(self.sender),
-			'recipient': str(self.recipient),
+			'sender': Cryp.dump_pub(self.sender) if self.type == 1 else self.sender,
+			'recipient': self.recipient if self.type == 1 or type(self.recipient) == str else Cryp.dump_pub(self.recipient),
 			'book': self.book,
-			'signature': str(self.signature)
+			'signature': self.signature
 		}
 		return json_dict
 
