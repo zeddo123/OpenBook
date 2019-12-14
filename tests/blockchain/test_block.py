@@ -6,7 +6,7 @@ from unittest.mock import patch
 from modules.blockchain.block import Block
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
-from modules.blockchain.cryptog import Cryptog
+from fastecdsa.keys import import_key
 import ast
 
 class TestBlock(unittest.TestCase):
@@ -18,10 +18,7 @@ class TestBlock(unittest.TestCase):
 			cls.jsons = ast.literal_eval(f.read())
 
 		# getting the private and public keys for the test
-		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
-			cls.private_key = f.read()
-		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
-			cls.public_key = f.read()
+		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem')
 
 
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
@@ -58,15 +55,15 @@ class TestBlock(unittest.TestCase):
 		self.assertEqual(self.block_1.hash_block(),
 			'02d72389b7366e51a4270cda1060554c9bde10538ae38c65d9b2f00e2a08b1f6')
 		self.assertEqual(self.block_2.hash_block(), 
-			'edb6736168a09a77730968670742421bfead5704c9efca2589e6f0c8c12846a3')
+			'422958ad5960ec69934c640204e0bc9a6f20aeae20cef040a617741d4719d013')
 		self.assertEqual(self.block_3.hash_block(), 
-			'0b9e5682b2563081281d2c5c1acd2b7c3640b94e052f87082951ad8e24bb86a0')
+			'9a1480c3480b6d88469aec89618a453da6bb31b8ba1cce2d9718638f2aadde47')
 		self.assertEqual(self.block_4.hash_block(), 
-			'a8ebda44c2c84f6d1ef9cfcfa379287f959199ef1e8c873409bd5382f161a811')
+			'f06c5d99239dead346ad0dfc52aa881353ed6571ce203feece3437eb22904488')
 		self.assertEqual(self.block_5.hash_block(), 
 			'6bd746967f61871e934983f806bb1a24932b094fa2e2bd6dd05f4bbafdb20346')
 		self.assertEqual(self.block_6.hash_block(), 
-			'3c5f86f1179c918fc5c28ecf977b471545ae41701fcb539f8ea145f82d4a6171')
+			'99a085ab962ddc5e3e72dd7efb589a1e30f17d987a94b08f22f797a41dc3d8e8')
 		self.assertEqual(self.block_7.hash_block(), 
 			'f5765a40ef87969bcec557812b8392746b5f77203a3ad1d7d639aa4d39724fa7')
 		self.assertEqual(self.block_8.hash_block(), 

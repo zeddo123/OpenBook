@@ -1,5 +1,5 @@
 import hashlib
-from modules.blockchain.cryptog import *
+from modules.blockchain.cryp import Cryp
 
 class Transaction:
 	"""the transaction object contains all the information about a transaction
@@ -42,7 +42,7 @@ class Transaction:
 		else:
 			self.book = book
 		if private_key and transaction_type == 1:
-			self.signature = Cryptog.get_signature(private_key, bytes(str(self.book), 'utf-8'))
+			self.signature = Cryp.get_signature(str(self.book), private_key)
 		elif transaction_type == 2:
 			self.signature = None
 		else:

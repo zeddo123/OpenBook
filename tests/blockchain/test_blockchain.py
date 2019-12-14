@@ -9,7 +9,8 @@ from modules.blockchain.blockchain import BlockChain
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
 from modules.blockchain.block import Block
-from modules.blockchain.cryptog import Cryptog
+from fastecdsa.keys import import_key
+
 
 
 class TestBlockchain(unittest.TestCase):
@@ -17,10 +18,7 @@ class TestBlockchain(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the private and public keys for the test
-		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
-			cls.private_key = f.read()
-		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
-			cls.public_key = f.read()
+		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem')
 
 	@patch('modules.blockchain.block.Block.hash_block', return_value='96b1255447ec94f9df2e7ad8d8e7d8106bd9b26ebba7fd97d0f3fb423afc961e', autospec=True)
 	@patch('modules.blockchain.block.Block.date_time_now', return_value='2019-10-16 19:49:28.800945', autospec=True)
@@ -116,7 +114,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
 		nonce = 34
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), False)
-		nonce = 426
+		nonce = 494
 		self.assertEqual(self.blockchain_1.valid_proof(last_hash, nonce), True)
 
 		self.blockchain_2.open_transactions.append(self.transaction_2)
@@ -126,7 +124,7 @@ class TestBlockchain(unittest.TestCase):
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
 		nonce = 202
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), False)
-		nonce = 30
+		nonce = 247
 		self.assertEqual(self.blockchain_2.valid_proof(last_hash, nonce), True)
 
 

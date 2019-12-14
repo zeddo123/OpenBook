@@ -8,7 +8,7 @@ __pycache__/
 *$py.class
 
 # crypto
-crypto/
+cryp/
 
 # C extensions
 *.so
@@ -129,4 +129,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Pycharm
+.idea/
 # End of https://www.gitignore.io/api/python

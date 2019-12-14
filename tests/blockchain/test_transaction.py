@@ -4,7 +4,7 @@ sys.path.append('../../')
 import unittest
 from modules.blockchain.transaction import Transaction
 from modules.blockchain.book import Book
-from modules.blockchain.cryptog import Cryptog
+from fastecdsa.keys import import_key
 
 
 class TestTransaction(unittest.TestCase):
@@ -12,10 +12,7 @@ class TestTransaction(unittest.TestCase):
 	@classmethod
 	def setUpClass(cls):
 		# getting the private and public keys for the test
-		with open("tests/blockchain/test_files/private_key.pem", 'rb') as f:
-			cls.private_key = f.read()
-		with open("tests/blockchain/test_files/public_key.pem", 'rb') as f:
-			cls.public_key = f.read()
+		cls.private_key, cls.public_key = import_key('tests/blockchain/test_files/default_keyprv.pem')
 
 	def setUp(self):
 		book_fortest = Book("Le Gène égoïste", "Richard Dawkins", "1976", "Non-fiction")
