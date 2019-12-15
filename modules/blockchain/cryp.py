@@ -10,6 +10,9 @@ class Cryp():
 
 	:Attributes:
 
+		:attr generate: True to generate key pair.
+		:type generate: bool
+
 		:attr path: a directory path to load from and save on.
 		:type path: str
 		
@@ -47,10 +50,13 @@ class Cryp():
 
 	"""
 
-	def __init__(self, path='../../'):
+	def __init__(self, generate=False, path='../../'):
 		self.path = path
-		self.private_key = None
-		self.public_key = None
+		if not generate:
+			self.private_key = None
+			self.public_key = None
+		else: 
+			self.generate_keys()
 
 
 	def generate_dir(self):
