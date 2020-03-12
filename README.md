@@ -2,8 +2,7 @@
 “Everything is a server if you are brave enough” Edward Snowden
 
 ## Open source Book Database.
-As of now there is no good *open book dbs*.
-the aim of Openbook is to have a **open source** and free book database that no one will have control over it !.
+the aim of Openbook is to have a **open source** and free book database that no one will have control over it !
 
 Every miner will be rewarded for mining the block, and adding books *'transactions'* to the network.
 
